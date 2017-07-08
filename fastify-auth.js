@@ -16,7 +16,8 @@ function checkAuth (fastify, opts, next) {
 }
 
 function auth (request, reply, done) {
-  const { jwt, level } = this
+  const jwt = this.jwt
+  const level = this.level
 
   if (!request.req.headers['auth']) {
     reply.code(400)
