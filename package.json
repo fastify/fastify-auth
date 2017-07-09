@@ -20,8 +20,8 @@
   },
   "dependencies": {
     "fastify-jwt": "^0.1.0",
+    "fastify-leveldb": "^0.1.0",
     "fastify-plugin": "^0.1.0",
-    "level": "^1.7.0",
     "pino-colada": "^1.4.0"
   }
 }
