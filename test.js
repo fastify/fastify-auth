@@ -3,7 +3,7 @@
 const t = require('tap')
 const test = t.test
 const rimraf = require('rimraf')
-const build = require('./')
+const build = require('./example')
 
 var fastify = null
 var token = null
@@ -45,9 +45,9 @@ test('Missing header', t => {
   }, res => {
     var payload = JSON.parse(res.payload)
     t.deepEqual(payload, {
-      error: 'Bad Request',
+      error: 'Unauthorized',
       message: 'Missing token header',
-      statusCode: 400
+      statusCode: 401
     })
   })
 })

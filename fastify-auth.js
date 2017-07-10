@@ -3,51 +3,48 @@
 const fp = require('fastify-plugin')
 
 function checkAuth (fastify, opts, next) {
-  if (!fastify.hasDecorator('jwt')) {
-    return next(new Error('JWT decorator is not present'))
-  }
-
-  if (!fastify.hasDecorator('level')) {
-    return next(new Error('level decorator is not present'))
-  }
-
   fastify.decorate('auth', auth)
   next()
-}
 
-function auth (request, reply, done) {
-  const jwt = this.jwt
-  const level = this.level
+  function auth (request, reply, done) {
+    var functions = reply.store.auth
+    var i = 0
 
-  if (!request.req.headers['auth']) {
-    reply.code(400)
-    return done(new Error('Missing token header'))
-  }
-
-  jwt.verify(request.req.headers['auth'], onVerify)
-
-  function onVerify (err, decoded) {
-    if (err || !decoded.user || !decoded.password) {
-      reply.code(401)
-      return done(new Error('Token not valid'))
+    if (functions === 0) {
+      done(new Error('no auth function specified'))
+      return
     }
 
-    level.get(decoded.user, onUser)
+    nextAuth()
 
-    function onUser (err, password) {
+    // TODO recycle this function
+    function nextAuth () {
+      var func = functions[i++]
+
+      if (!func) {
+        done()
+        return
+      }
+
+      func.call(this, request, reply, onAuth)
+    }
+
+    // TODO recycle this function
+    function onAuth (err, ok, msg) {
       if (err) {
-        if (err.notFound) {
-          reply.code(401)
-          return done(new Error('Token not valid'))
-        }
-        return done(err)
-      }
-      if (!password || password !== decoded.password) {
-        reply.code(401)
-        return done(new Error('Token not valid'))
+        done(err)
+        return
       }
 
-      done()
+      if (!ok) {
+        // TODO how do we render HTML here?
+        reply.code(401)
+        // TODO we should not create an Error here
+        done(new Error(msg || 'not authorized'))
+        return
+      }
+
+      nextAuth()
     }
   }
 }

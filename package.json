@@ -2,7 +2,7 @@
   "name": "fastify-auth",
   "version": "0.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "fastify-auth.js",
   "scripts": {
     "start": "node index.js | pino-colada",
     "clean": "rimraf authdb",
@@ -10,18 +10,24 @@
   },
   "keywords": [],
   "author": "Tomas Della Vedova - @delvedor (http://delved.org)",
+  "contributors": [
+    {
+      "name": "Matteo Collina",
+      "email": "hello@matteocollina.com"
+    }
+  ],
   "license": "MIT",
   "devDependencies": {
     "fastify": "^0.24.0",
     "rimraf": "^2.6.1",
     "shot": "^3.4.2",
     "standard": "^10.0.2",
-    "tap": "^10.7.0"
-  },
-  "dependencies": {
+    "tap": "^10.7.0",
     "fastify-jwt": "^0.1.0",
     "fastify-leveldb": "^0.1.0",
-    "fastify-plugin": "^0.1.0",
     "pino-colada": "^1.4.0"
+  },
+  "dependencies": {
+    "fastify-plugin": "^0.1.0"
   }
 }
