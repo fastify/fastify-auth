@@ -6,46 +6,46 @@ function checkAuth (fastify, opts, next) {
   fastify.decorate('auth', auth)
   next()
 
-  function auth (request, reply, done) {
-    var functions = reply.store.auth
-    var i = 0
-
-    if (functions === 0) {
-      done(new Error('no auth function specified'))
-      return
+  function auth (functions) {
+    if (!Array.isArray(functions)) {
+      throw new Error('You must give an array of functions to the auth function')
+    }
+    if (!functions.length) {
+      throw new Error('Missing auth functions')
     }
 
-    nextAuth()
-
-    // TODO recycle this function
-    function nextAuth () {
-      var func = functions[i++]
-
-      if (!func) {
-        done()
-        return
-      }
-
-      func.call(this, request, reply, onAuth)
-    }
-
-    // TODO recycle this function
-    function onAuth (err, ok, msg) {
-      if (err) {
-        done(err)
-        return
-      }
-
-      if (!ok) {
-        // TODO how do we render HTML here?
-        reply.code(401)
-        // TODO we should not create an Error here
-        done(new Error(msg || 'not authorized'))
-        return
-      }
+    function _auth (request, reply, done) {
+      var functions = this.functions
+      var i = 0
 
       nextAuth()
+
+      // TODO recycle this function
+      function nextAuth (err) {
+        var func = functions[i++]
+
+        if (!func) {
+          if (!reply.res.statusCode || reply.res.statusCode < 400) {
+            reply.code(401)
+          }
+          done(err)
+          return
+        }
+
+        func(request, reply, onAuth)
+      }
+
+      // TODO recycle this function
+      function onAuth (err) {
+        if (err) {
+          return nextAuth(err)
+        }
+
+        return done()
+      }
     }
+
+    return _auth.bind({ functions })
   }
 }
 

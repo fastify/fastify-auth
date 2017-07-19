@@ -12,20 +12,21 @@ function build (opts) {
     .after(routes)
 
   fastify.decorate('verifyJWTandLevel', verifyJWTandLevel)
+  fastify.decorate('verifyUserAndPassword', verifyUserAndPassword)
 
   function verifyJWTandLevel (request, reply, done) {
     const jwt = this.jwt
     const level = this.level
 
     if (!request.req.headers['auth']) {
-      return done(null, false, 'Missing token header')
+      return done(new Error('Missing token header'))
     }
 
     jwt.verify(request.req.headers['auth'], onVerify)
 
     function onVerify (err, decoded) {
       if (err || !decoded.user || !decoded.password) {
-        return done(null, false, 'Token not valid')
+        return done(new Error('Token not valid'))
       }
 
       level.get(decoded.user, onUser)
@@ -33,17 +34,38 @@ function build (opts) {
       function onUser (err, password) {
         if (err) {
           if (err.notFound) {
-            return done(null, false, 'Token not valid')
+            return done(new Error('Token not valid'))
           }
           return done(err)
         }
 
         if (!password || password !== decoded.password) {
-          return done(null, false, 'Token not valid')
+          return done(new Error('Token not valid'))
         }
 
-        done(null, true)
+        done()
       }
+    }
+  }
+
+  function verifyUserAndPassword (request, reply, done) {
+    const level = this.level
+
+    level.get(request.body.user, onUser)
+
+    function onUser (err, password) {
+      if (err) {
+        if (err.notFound) {
+          return done(new Error('Password not valid'))
+        }
+        return done(err)
+      }
+
+      if (!password || password !== request.body.password) {
+        return done(new Error('Password not valid'))
+      }
+
+      done()
     }
   }
 
@@ -90,8 +112,20 @@ function build (opts) {
     fastify.route({
       method: 'GET',
       url: '/auth',
-      auth: [fastify.verifyJWTandLevel.bind(fastify)],
-      beforeHandler: fastify.auth.bind(fastify),
+      beforeHandler: fastify.auth([fastify.verifyJWTandLevel.bind(fastify)]),
+      handler: (req, reply) => {
+        req.log.info('Auth route')
+        reply.send({ hello: 'world' })
+      }
+    })
+
+    fastify.route({
+      method: 'POST',
+      url: '/auth-multiple',
+      beforeHandler: fastify.auth([
+        fastify.verifyJWTandLevel.bind(fastify),
+        fastify.verifyUserAndPassword.bind(fastify)
+      ]),
       handler: (req, reply) => {
         req.log.info('Auth route')
         reply.send({ hello: 'world' })
