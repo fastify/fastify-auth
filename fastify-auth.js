@@ -28,9 +28,7 @@ function auth (functions) {
     obj.done = done
     obj.functions = this.functions
     obj.i = 0
-    obj.release = holder => {
-      this.instance.release(holder)
-    }
+    obj.instance = this.instance
 
     obj.nextAuth()
   }
@@ -45,7 +43,7 @@ function Auth () {
   this.request = null
   this.reply = null
   this.done = null
-  this.release = null
+  this.instance = null
 
   var that = this
 
@@ -57,7 +55,7 @@ function Auth () {
         that.reply.code(401)
       }
 
-      that.release(that)
+      that.instance.release(that)
       that.done(err)
       return
     }
@@ -70,7 +68,7 @@ function Auth () {
       return that.nextAuth(err)
     }
 
-    that.release(that)
+    that.instance.release(that)
     return that.done()
   }
 }
