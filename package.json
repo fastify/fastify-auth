@@ -1,14 +1,17 @@
 {
   "name": "fastify-auth",
   "version": "0.1.0",
-  "description": "",
+  "description": "Run multiple auth functions in Fastify",
   "main": "fastify-auth.js",
   "scripts": {
-    "start": "node index.js | pino-colada",
     "clean": "rimraf authdb",
     "test": "standard && tap test.js"
   },
-  "keywords": [],
+  "keywords": [
+    "fastify",
+    "auth",
+    "speed"
+  ],
   "author": "Tomas Della Vedova - @delvedor (http://delved.org)",
   "contributors": [
     {
@@ -24,8 +27,7 @@
     "standard": "^10.0.2",
     "tap": "^10.7.0",
     "fastify-jwt": "^0.1.0",
-    "fastify-leveldb": "^0.1.0",
-    "pino-colada": "^1.4.0"
+    "fastify-leveldb": "^0.1.0"
   },
   "dependencies": {
     "fastify-plugin": "^0.1.0",
