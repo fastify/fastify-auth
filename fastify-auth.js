@@ -14,6 +14,10 @@ function checkAuth (fastify, opts, next) {
       throw new Error('Missing auth functions')
     }
 
+    for (var i = 0; i < functions.length; i++) {
+      functions[i] = functions[i].bind(this)
+    }
+
     function _auth (request, reply, done) {
       var functions = this.functions
       var i = 0

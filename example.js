@@ -112,7 +112,7 @@ function build (opts) {
     fastify.route({
       method: 'GET',
       url: '/auth',
-      beforeHandler: fastify.auth([fastify.verifyJWTandLevel.bind(fastify)]),
+      beforeHandler: fastify.auth([fastify.verifyJWTandLevel]),
       handler: (req, reply) => {
         req.log.info('Auth route')
         reply.send({ hello: 'world' })
@@ -123,8 +123,8 @@ function build (opts) {
       method: 'POST',
       url: '/auth-multiple',
       beforeHandler: fastify.auth([
-        fastify.verifyJWTandLevel.bind(fastify),
-        fastify.verifyUserAndPassword.bind(fastify)
+        fastify.verifyJWTandLevel,
+        fastify.verifyUserAndPassword
       ]),
       handler: (req, reply) => {
         req.log.info('Auth route')
