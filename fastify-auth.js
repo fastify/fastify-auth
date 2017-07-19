@@ -1,55 +1,77 @@
 'use strict'
 
 const fp = require('fastify-plugin')
+const reusify = require('reusify')
 
 function checkAuth (fastify, opts, next) {
   fastify.decorate('auth', auth)
   next()
+}
 
-  function auth (functions) {
-    if (!Array.isArray(functions)) {
-      throw new Error('You must give an array of functions to the auth function')
+function auth (functions) {
+  if (!Array.isArray(functions)) {
+    throw new Error('You must give an array of functions to the auth function')
+  }
+  if (!functions.length) {
+    throw new Error('Missing auth functions')
+  }
+
+  for (var i = 0; i < functions.length; i++) {
+    functions[i] = functions[i].bind(this)
+  }
+
+  function _auth (request, reply, done) {
+    var obj = this.instance.get()
+
+    obj.request = request
+    obj.reply = reply
+    obj.done = done
+    obj.functions = this.functions
+    obj.i = 0
+    obj.release = holder => {
+      this.instance.release(holder)
     }
-    if (!functions.length) {
-      throw new Error('Missing auth functions')
-    }
 
-    for (var i = 0; i < functions.length; i++) {
-      functions[i] = functions[i].bind(this)
-    }
+    obj.nextAuth()
+  }
 
-    function _auth (request, reply, done) {
-      var functions = this.functions
-      var i = 0
+  return _auth.bind({ functions, instance: reusify(Auth) })
+}
 
-      nextAuth()
+function Auth () {
+  this.next = null
+  this.i = 0
+  this.functions = []
+  this.request = null
+  this.reply = null
+  this.done = null
+  this.release = null
 
-      // TODO recycle this function
-      function nextAuth (err) {
-        var func = functions[i++]
+  var that = this
 
-        if (!func) {
-          if (!reply.res.statusCode || reply.res.statusCode < 400) {
-            reply.code(401)
-          }
-          done(err)
-          return
-        }
+  this.nextAuth = function nextAuth (err) {
+    var func = that.functions[that.i++]
 
-        func(request, reply, onAuth)
+    if (!func) {
+      if (!that.reply.res.statusCode || that.reply.res.statusCode < 400) {
+        that.reply.code(401)
       }
 
-      // TODO recycle this function
-      function onAuth (err) {
-        if (err) {
-          return nextAuth(err)
-        }
-
-        return done()
-      }
+      that.release(that)
+      that.done(err)
+      return
     }
 
-    return _auth.bind({ functions })
+    func(that.request, that.reply, that.onAuth)
+  }
+
+  this.onAuth = function onAuth (err) {
+    if (err) {
+      return that.nextAuth(err)
+    }
+
+    that.release(that)
+    return that.done()
   }
 }
 

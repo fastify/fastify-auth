@@ -28,6 +28,7 @@
     "pino-colada": "^1.4.0"
   },
   "dependencies": {
-    "fastify-plugin": "^0.1.0"
+    "fastify-plugin": "^0.1.0",
+    "reusify": "^1.0.1"
   }
 }
