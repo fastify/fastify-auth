@@ -103,3 +103,39 @@ test('Auth not succesful', t => {
     })
   })
 })
+
+test('Auth succesful (multiple)', t => {
+  t.plan(1)
+
+  fastify.inject({
+    method: 'POST',
+    url: '/auth-multiple',
+    payload: {
+      user: 'tomas',
+      password: 'a-very-secure-one'
+    }
+  }, res => {
+    var payload = JSON.parse(res.payload)
+    t.deepEqual(payload, { hello: 'world' })
+  })
+})
+
+test('Auth not succesful (multiple)', t => {
+  t.plan(1)
+
+  fastify.inject({
+    method: 'POST',
+    url: '/auth-multiple',
+    payload: {
+      user: 'tomas',
+      password: 'wrong!'
+    }
+  }, res => {
+    var payload = JSON.parse(res.payload)
+    t.deepEqual(payload, {
+      error: 'Unauthorized',
+      message: 'Password not valid',
+      statusCode: 401
+    })
+  })
+})
