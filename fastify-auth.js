@@ -20,56 +20,56 @@ function auth (functions) {
     functions[i] = functions[i].bind(this)
   }
 
+  var instance = reusify(Auth)
+
   function _auth (request, reply, done) {
-    var obj = this.instance.get()
+    var obj = instance.get()
 
     obj.request = request
     obj.reply = reply
     obj.done = done
     obj.functions = this.functions
     obj.i = 0
-    obj.instance = this.instance
 
     obj.nextAuth()
   }
 
-  return _auth.bind({ functions, instance: reusify(Auth) })
-}
+  return _auth.bind({ functions })
 
-function Auth () {
-  this.next = null
-  this.i = 0
-  this.functions = []
-  this.request = null
-  this.reply = null
-  this.done = null
-  this.instance = null
+  function Auth () {
+    this.next = null
+    this.i = 0
+    this.functions = []
+    this.request = null
+    this.reply = null
+    this.done = null
 
-  var that = this
+    var that = this
 
-  this.nextAuth = function nextAuth (err) {
-    var func = that.functions[that.i++]
+    this.nextAuth = function nextAuth (err) {
+      var func = that.functions[that.i++]
 
-    if (!func) {
-      if (!that.reply.res.statusCode || that.reply.res.statusCode < 400) {
-        that.reply.code(401)
+      if (!func) {
+        if (!that.reply.res.statusCode || that.reply.res.statusCode < 400) {
+          that.reply.code(401)
+        }
+
+        instance.release(that)
+        that.done(err)
+        return
       }
 
-      that.instance.release(that)
-      that.done(err)
-      return
+      func(that.request, that.reply, that.onAuth)
     }
 
-    func(that.request, that.reply, that.onAuth)
-  }
+    this.onAuth = function onAuth (err) {
+      if (err) {
+        return that.nextAuth(err)
+      }
 
-  this.onAuth = function onAuth (err) {
-    if (err) {
-      return that.nextAuth(err)
+      instance.release(that)
+      return that.done()
     }
-
-    that.instance.release(that)
-    return that.done()
   }
 }
 
