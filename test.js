@@ -3,7 +3,7 @@
 const t = require('tap')
 const test = t.test
 const rimraf = require('rimraf')
-const build = require('./')
+const build = require('./example')
 
 var fastify = null
 var token = null
@@ -45,9 +45,9 @@ test('Missing header', t => {
   }, res => {
     var payload = JSON.parse(res.payload)
     t.deepEqual(payload, {
-      error: 'Bad Request',
+      error: 'Unauthorized',
       message: 'Missing token header',
-      statusCode: 400
+      statusCode: 401
     })
   })
 })
@@ -99,6 +99,42 @@ test('Auth not succesful', t => {
     t.deepEqual(payload, {
       error: 'Unauthorized',
       message: 'Token not valid',
+      statusCode: 401
+    })
+  })
+})
+
+test('Auth succesful (multiple)', t => {
+  t.plan(1)
+
+  fastify.inject({
+    method: 'POST',
+    url: '/auth-multiple',
+    payload: {
+      user: 'tomas',
+      password: 'a-very-secure-one'
+    }
+  }, res => {
+    var payload = JSON.parse(res.payload)
+    t.deepEqual(payload, { hello: 'world' })
+  })
+})
+
+test('Auth not succesful (multiple)', t => {
+  t.plan(1)
+
+  fastify.inject({
+    method: 'POST',
+    url: '/auth-multiple',
+    payload: {
+      user: 'tomas',
+      password: 'wrong!'
+    }
+  }, res => {
+    var payload = JSON.parse(res.payload)
+    t.deepEqual(payload, {
+      error: 'Unauthorized',
+      message: 'Password not valid',
       statusCode: 401
     })
   })

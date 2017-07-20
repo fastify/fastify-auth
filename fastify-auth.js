@@ -1,53 +1,74 @@
 'use strict'
 
 const fp = require('fastify-plugin')
+const reusify = require('reusify')
 
 function checkAuth (fastify, opts, next) {
-  if (!fastify.hasDecorator('jwt')) {
-    return next(new Error('JWT decorator is not present'))
-  }
-
-  if (!fastify.hasDecorator('level')) {
-    return next(new Error('level decorator is not present'))
-  }
-
   fastify.decorate('auth', auth)
   next()
 }
 
-function auth (request, reply, done) {
-  const jwt = this.jwt
-  const level = this.level
-
-  if (!request.req.headers['auth']) {
-    reply.code(400)
-    return done(new Error('Missing token header'))
+function auth (functions) {
+  if (!Array.isArray(functions)) {
+    throw new Error('You must give an array of functions to the auth function')
+  }
+  if (!functions.length) {
+    throw new Error('Missing auth functions')
   }
 
-  jwt.verify(request.req.headers['auth'], onVerify)
+  for (var i = 0; i < functions.length; i++) {
+    functions[i] = functions[i].bind(this)
+  }
 
-  function onVerify (err, decoded) {
-    if (err || !decoded.user || !decoded.password) {
-      reply.code(401)
-      return done(new Error('Token not valid'))
+  var instance = reusify(Auth)
+
+  function _auth (request, reply, done) {
+    var obj = instance.get()
+
+    obj.request = request
+    obj.reply = reply
+    obj.done = done
+    obj.functions = this.functions
+    obj.i = 0
+
+    obj.nextAuth()
+  }
+
+  return _auth.bind({ functions })
+
+  function Auth () {
+    this.next = null
+    this.i = 0
+    this.functions = []
+    this.request = null
+    this.reply = null
+    this.done = null
+
+    var that = this
+
+    this.nextAuth = function nextAuth (err) {
+      var func = that.functions[that.i++]
+
+      if (!func) {
+        if (!that.reply.res.statusCode || that.reply.res.statusCode < 400) {
+          that.reply.code(401)
+        }
+
+        instance.release(that)
+        that.done(err)
+        return
+      }
+
+      func(that.request, that.reply, that.onAuth)
     }
 
-    level.get(decoded.user, onUser)
-
-    function onUser (err, password) {
+    this.onAuth = function onAuth (err) {
       if (err) {
-        if (err.notFound) {
-          reply.code(401)
-          return done(new Error('Token not valid'))
-        }
-        return done(err)
-      }
-      if (!password || password !== decoded.password) {
-        reply.code(401)
-        return done(new Error('Token not valid'))
+        return that.nextAuth(err)
       }
 
-      done()
+      instance.release(that)
+      return that.done()
     }
   }
 }
