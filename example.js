@@ -76,7 +76,7 @@ function build (opts) {
       schema: {
         body: {
           type: 'object',
-          propertries: {
+          properties: {
             user: { type: 'string' },
             password: { type: 'string' }
           },
