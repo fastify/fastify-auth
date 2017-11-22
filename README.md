@@ -39,6 +39,8 @@ fastify.route({
   }
 })
 ```
+Keep in mind that route definition should either be done as [a plugin](https://github.com/fastify/fastify/blob/master/docs/Plugins.md) or within `.after()` callback. For complete example implementation see [example.js](example.js).
+
 `fastify-auth` will run all your authentication methods if at least one succeed it will continue your request, otherwise it will return an error to the client. It will automatically stop as soon as a authentication succeed.
 
 You can use this plugin on route level, as in the above example or on hook level, by using the `preHandler` hook:
