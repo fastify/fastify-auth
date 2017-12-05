@@ -2,6 +2,10 @@
   "name": "fastify-auth",
   "version": "0.1.0",
   "description": "Run multiple auth functions in Fastify",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fastify/fastify-auth.git"
+  },
   "main": "fastify-auth.js",
   "scripts": {
     "clean": "rimraf authdb",
@@ -21,13 +25,13 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "fastify": "^0.24.0",
-    "rimraf": "^2.6.1",
-    "shot": "^3.4.2",
-    "standard": "^10.0.2",
-    "tap": "^10.7.0",
+    "fastify": "^0.35.3",
     "fastify-jwt": "^0.1.0",
-    "fastify-leveldb": "^0.1.0"
+    "fastify-leveldb": "^0.2.0",
+    "pre-commit": "^1.2.2",
+    "rimraf": "^2.6.1",
+    "standard": "^10.0.2",
+    "tap": "^11.0.0"
   },
   "dependencies": {
     "fastify-plugin": "^0.1.0",

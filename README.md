@@ -14,30 +14,30 @@ npm i fastify-auth --save
 As said above, `fastify-auth` does not provide an authentication strategy, so you must provide it (or them) by yourself, with a decorator or another plugin.
 In the following example you will find a very simple implementation that should help you understand how use this module.  
 ```js
-fastify.register(require('fastify-auth'))
-
-fastify.decorate('verifyJWTandLevel', function (request, reply, done) {
-  // your validation logic
-  done() // pass an error if the authentication fails
-})
-
-fastify.decorate('verifyUserAndPassword', function (request, reply, done) {
-  // your validation logic
-  done() // pass an error if the authentication fails
-})
-
-fastify.route({
-  method: 'POST',
-  url: '/auth-multiple',
-  beforeHandler: fastify.auth([
-    fastify.verifyJWTandLevel,
-    fastify.verifyUserAndPassword
-  ]),
-  handler: (req, reply) => {
-    req.log.info('Auth route')
-    reply.send({ hello: 'world' })
-  }
-})
+fastify
+  .decorate('verifyJWTandLevel', function (request, reply, done) {
+    // your validation logic
+    done() // pass an error if the authentication fails
+  })
+  .decorate('verifyUserAndPassword', function (request, reply, done) {
+    // your validation logic
+    done() // pass an error if the authentication fails
+  })
+  .register(require('fastify-auth'))
+  .after(() => {
+    fastify.route({
+      method: 'POST',
+      url: '/auth-multiple',
+      beforeHandler: fastify.auth([
+        fastify.verifyJWTandLevel,
+        fastify.verifyUserAndPassword
+      ]),
+      handler: (req, reply) => {
+        req.log.info('Auth route')
+        reply.send({ hello: 'world' })
+      }
+    })
+  })
 ```
 Keep in mind that route definition should either be done as [a plugin](https://github.com/fastify/fastify/blob/master/docs/Plugins.md) or within `.after()` callback. For complete example implementation see [example.js](example.js).
 
