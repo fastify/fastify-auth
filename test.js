@@ -24,25 +24,27 @@ test('boot server', t => {
 })
 
 test('Route without auth', t => {
-  t.plan(1)
+  t.plan(2)
 
   fastify.inject({
     method: 'GET',
     url: '/no-auth'
-  }, res => {
+  }, (err, res) => {
+    t.error(err)
     var payload = JSON.parse(res.payload)
     t.deepEqual(payload, { hello: 'world' })
   })
 })
 
 test('Missing header', t => {
-  t.plan(1)
+  t.plan(2)
 
   fastify.inject({
     method: 'GET',
     url: '/auth',
     headers: {}
-  }, res => {
+  }, (err, res) => {
+    t.error(err)
     var payload = JSON.parse(res.payload)
     t.deepEqual(payload, {
       error: 'Unauthorized',
@@ -53,7 +55,7 @@ test('Missing header', t => {
 })
 
 test('Register user', t => {
-  t.plan(2)
+  t.plan(3)
 
   fastify.inject({
     method: 'POST',
@@ -62,7 +64,8 @@ test('Register user', t => {
       user: 'tomas',
       password: 'a-very-secure-one'
     }
-  }, res => {
+  }, (err, res) => {
+    t.error(err)
     var payload = JSON.parse(res.payload)
     t.equal(res.statusCode, 200)
     token = payload.token
@@ -71,7 +74,7 @@ test('Register user', t => {
 })
 
 test('Auth succesful', t => {
-  t.plan(1)
+  t.plan(2)
 
   fastify.inject({
     method: 'GET',
@@ -79,14 +82,15 @@ test('Auth succesful', t => {
     headers: {
       auth: token
     }
-  }, res => {
+  }, (err, res) => {
+    t.error(err)
     var payload = JSON.parse(res.payload)
     t.deepEqual(payload, { hello: 'world' })
   })
 })
 
 test('Auth not succesful', t => {
-  t.plan(1)
+  t.plan(2)
 
   fastify.inject({
     method: 'GET',
@@ -94,7 +98,8 @@ test('Auth not succesful', t => {
     headers: {
       auth: 'the winter is coming'
     }
-  }, res => {
+  }, (err, res) => {
+    t.error(err)
     var payload = JSON.parse(res.payload)
     t.deepEqual(payload, {
       error: 'Unauthorized',
@@ -105,7 +110,7 @@ test('Auth not succesful', t => {
 })
 
 test('Auth succesful (multiple)', t => {
-  t.plan(1)
+  t.plan(2)
 
   fastify.inject({
     method: 'POST',
@@ -114,14 +119,15 @@ test('Auth succesful (multiple)', t => {
       user: 'tomas',
       password: 'a-very-secure-one'
     }
-  }, res => {
+  }, (err, res) => {
+    t.error(err)
     var payload = JSON.parse(res.payload)
     t.deepEqual(payload, { hello: 'world' })
   })
 })
 
 test('Auth not succesful (multiple)', t => {
-  t.plan(1)
+  t.plan(2)
 
   fastify.inject({
     method: 'POST',
@@ -130,7 +136,8 @@ test('Auth not succesful (multiple)', t => {
       user: 'tomas',
       password: 'wrong!'
     }
-  }, res => {
+  }, (err, res) => {
+    t.error(err)
     var payload = JSON.parse(res.payload)
     t.deepEqual(payload, {
       error: 'Unauthorized',

@@ -25,16 +25,16 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "fastify": "^0.35.3",
-    "fastify-jwt": "^0.1.0",
-    "fastify-leveldb": "^0.2.0",
+    "fastify": "^1.0.0-rc.1",
+    "fastify-jwt": "^0.2.0",
+    "fastify-leveldb": "^0.3.0",
     "pre-commit": "^1.2.2",
     "rimraf": "^2.6.1",
     "standard": "^10.0.2",
-    "tap": "^11.0.0"
+    "tap": "^11.1.0"
   },
   "dependencies": {
     "fastify-plugin": "^0.2.0",
-    "reusify": "^1.0.1"
+    "reusify": "^1.0.4"
   }
 }
