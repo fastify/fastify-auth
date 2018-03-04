@@ -30,7 +30,7 @@
     "fastify-leveldb": "^0.3.0",
     "pre-commit": "^1.2.2",
     "rimraf": "^2.6.1",
-    "standard": "^10.0.2",
+    "standard": "^11.0.0",
     "tap": "^11.1.0"
   },
   "dependencies": {
