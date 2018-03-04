@@ -1,5 +1,7 @@
 # fastify-auth
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/fastify/fastify-auth.svg)](https://greenkeeper.io/)
+
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/)  [![Build Status](https://travis-ci.org/fastify/fastify-auth.svg?branch=master)](https://travis-ci.org/fastify/fastify-auth)
 
 This module does not provide an authentication strategy, but it provides a very fast utility to handle authentication (also multiple strategies) in your routes, without adding overhead.  
