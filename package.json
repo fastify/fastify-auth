@@ -34,7 +34,7 @@
     "tap": "^11.1.0"
   },
   "dependencies": {
-    "fastify-plugin": "^0.2.0",
+    "fastify-plugin": "^1.0.0",
     "reusify": "^1.0.4"
   }
 }
