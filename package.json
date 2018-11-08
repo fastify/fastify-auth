@@ -7,9 +7,11 @@
     "url": "git+https://github.com/fastify/fastify-auth.git"
   },
   "main": "fastify-auth.js",
+  "types": "fastify-auth.d.ts",
   "scripts": {
     "clean": "rimraf authdb",
-    "test": "standard && tap test.js"
+    "test": "standard && tap test.js",
+    "typescript": "tsc --project ./tsconfig.json"
   },
   "keywords": [
     "fastify",
@@ -31,7 +33,8 @@
     "pre-commit": "^1.2.2",
     "rimraf": "^2.6.1",
     "standard": "^12.0.1",
-    "tap": "^12.0.0"
+    "tap": "^12.0.0",
+    "typescript": "^3.1.6"
   },
   "dependencies": {
     "fastify-plugin": "^1.0.0",
