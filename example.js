@@ -1,4 +1,23 @@
 'use strict'
+/*
+Register a user:
+
+    curl -i 'http://127.0.0.1:3000/register' -H 'content-type: application/json' --data '{"user": "myuser","password":"mypass"}'
+Will return:
+    {"token":"YOUR_JWT_TOKEN"}
+
+The application then:
+1. generates a JWT token (from 'supersecret') and adds to the response headers
+1. inserts user in the leveldb
+
+Check it's all working by using one or the other auth mechanisms:
+1. Auth using username and password (you can also use JWT on this endpoint)
+    curl 'http://127.0.0.1:3000/auth-multiple' -H 'content-type: application/json' --data '{"user": "myuser","password":"mypass"}'
+    {"hello":"world"}
+
+1. Auth using JWT token
+    curl -i 'http://127.0.0.1:3000/auth' -H 'content-type: application/json' -H "auth: YOUR_JWT_TOKEN"
+ */
 
 const Fastify = require('fastify')
 
@@ -8,13 +27,13 @@ function build (opts) {
   fastify
     .register(require('fastify-jwt'), { secret: 'supersecret' })
     .register(require('fastify-leveldb'), { name: 'authdb' })
-    .register(require('./fastify-auth'))
+    .register(require('./fastify-auth')) // just 'fastify-auth' IRL
     .after(routes)
 
-  fastify.decorate('verifyJWTandLevel', verifyJWTandLevel)
+  fastify.decorate('verifyJWTandLevelDB', verifyJWTandLevelDB)
   fastify.decorate('verifyUserAndPassword', verifyUserAndPassword)
 
-  function verifyJWTandLevel (request, reply, done) {
+  function verifyJWTandLevelDB (request, reply, done) {
     const jwt = this.jwt
     const level = this.level
 
@@ -55,6 +74,10 @@ function build (opts) {
 
   function verifyUserAndPassword (request, reply, done) {
     const level = this.level
+
+    if (!request.body || !request.body.user) {
+      return done(new Error('Missing user in request body'))
+    }
 
     level.get(request.body.user, onUser)
 
@@ -117,7 +140,7 @@ function build (opts) {
     fastify.route({
       method: 'GET',
       url: '/auth',
-      preHandler: fastify.auth([fastify.verifyJWTandLevel]),
+      preHandler: fastify.auth([fastify.verifyJWTandLevelDB]),
       handler: (req, reply) => {
         req.log.info('Auth route')
         reply.send({ hello: 'world' })
@@ -128,7 +151,8 @@ function build (opts) {
       method: 'POST',
       url: '/auth-multiple',
       preHandler: fastify.auth([
-        fastify.verifyJWTandLevel,
+        // Only one of these has to pass
+        fastify.verifyJWTandLevelDB,
         fastify.verifyUserAndPassword
       ]),
       handler: (req, reply) => {
@@ -149,7 +173,7 @@ if (require.main === module) {
   })
   fastify.listen(3000, err => {
     if (err) throw err
-    console.log(`Server listenting at http://localhost:${fastify.server.address().port}`)
+    console.log(`Server listening at http://localhost:${fastify.server.address().port}`)
   })
 }
 
