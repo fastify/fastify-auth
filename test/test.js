@@ -3,7 +3,7 @@
 const t = require('tap')
 const test = t.test
 const rimraf = require('rimraf')
-const build = require('./example')
+const build = require('../example')
 
 var fastify = null
 var token = null
@@ -86,26 +86,6 @@ test('Auth succesful', t => {
     t.error(err)
     var payload = JSON.parse(res.payload)
     t.deepEqual(payload, { hello: 'world' })
-  })
-})
-
-test('Auth not succesful', t => {
-  t.plan(2)
-
-  fastify.inject({
-    method: 'GET',
-    url: '/auth',
-    headers: {
-      auth: 'the winter is coming'
-    }
-  }, (err, res) => {
-    t.error(err)
-    var payload = JSON.parse(res.payload)
-    t.deepEqual(payload, {
-      error: 'Unauthorized',
-      message: 'Token not valid',
-      statusCode: 401
-    })
   })
 })
 

@@ -59,7 +59,11 @@ function auth (functions) {
         return
       }
 
-      func(that.request, that.reply, that.onAuth)
+      var maybePromise = func(that.request, that.reply, that.onAuth)
+
+      if (Promise.resolve(maybePromise) === maybePromise) {
+        maybePromise.then(that.onAuth).catch(that.onAuth)
+      }
     }
 
     this.onAuth = function onAuth (err) {
