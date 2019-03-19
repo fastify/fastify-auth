@@ -61,7 +61,7 @@ function auth (functions) {
 
       var maybePromise = func(that.request, that.reply, that.onAuth)
 
-      if (Promise.resolve(maybePromise) === maybePromise) {
+     if (maybePromise && typeof maybePromise.then === 'function')
         maybePromise.then(that.onAuth).catch(that.onAuth)
       }
     }
