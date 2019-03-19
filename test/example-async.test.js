@@ -3,7 +3,7 @@
 const t = require('tap')
 const test = t.test
 const rimraf = require('rimraf')
-const build = require('../example')
+const build = require('../example-async')
 
 var fastify = null
 var token = null
@@ -106,6 +106,26 @@ test('Auth succesful (multiple)', t => {
   })
 })
 
+test('Auth not succesful', t => {
+  t.plan(2)
+
+  fastify.inject({
+    method: 'GET',
+    url: '/auth',
+    headers: {
+      auth: 'the winter is coming'
+    }
+  }, (err, res) => {
+    t.error(err)
+    var payload = JSON.parse(res.payload)
+    t.deepEqual(payload, {
+      error: 'Unauthorized',
+      message: 'Token not valid',
+      statusCode: 401
+    })
+  })
+})
+
 test('Auth not succesful (multiple)', t => {
   t.plan(2)
 
@@ -124,5 +144,24 @@ test('Auth not succesful (multiple)', t => {
       message: 'Password not valid',
       statusCode: 401
     })
+  })
+})
+
+test('Failure with explicit reply', t => {
+  t.plan(3)
+
+  fastify.inject({
+    method: 'POST',
+    url: '/auth-multiple',
+    payload: {
+      failureWithReply: true,
+      user: 'tomas',
+      password: 'wrong!'
+    }
+  }, (err, res) => {
+    t.error(err)
+    var payload = JSON.parse(res.payload)
+    t.equal(res.statusCode, 401)
+    t.deepEqual(payload, { error: 'Unauthorized' })
   })
 })

@@ -65,3 +65,4 @@ typings/
 
 # test db
 authdb
+authdb-async
