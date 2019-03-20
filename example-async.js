@@ -18,40 +18,29 @@ function build (opts) {
     const jwt = this.jwt
     const level = this.level
 
+    if (request.body && request.body.failureWithReply) {
+      reply.code(401).send({ error: 'Unauthorized' })
+      return Promise.reject(new Error())
+    }
+
+    if (!request.req.headers['auth']) {
+      return Promise.reject(new Error('Missing token header'))
+    }
+
     return new Promise(function (resolve, reject) {
-      if (request.body && request.body.failureWithReply) {
-        reply.code(401).send({ 'error': 'Unauthorized' })
-        return reject(new Error())
-      }
-
-      if (!request.req.headers['auth']) {
-        return reject(new Error('Missing token header'))
-      }
-
-      jwt.verify(request.req.headers['auth'], onVerify)
-
-      function onVerify (err, decoded) {
-        if (err || !decoded.user || !decoded.password) {
-          return reject(new Error('Token not valid'))
-        }
-
-        level.get(decoded.user, onUser)
-
-        function onUser (err, password) {
-          if (err) {
-            if (err.notFound) {
-              return reject(new Error('Token not valid'))
-            }
-            return reject(err)
-          }
-
+      jwt.verify(request.req.headers['auth'], function (err, decoded) {
+        if (err) { reject(err) };
+        resolve(decoded)
+      })
+    }).then(function (decoded) {
+      return level.get(decoded.user)
+        .then(function (password) {
           if (!password || password !== decoded.password) {
-            return reject(new Error('Token not valid'))
+            throw new Error('Token not valid')
           }
-
-          resolve()
-        }
-      }
+        })
+    }).catch(function () {
+      throw new Error('Token not valid')
     })
   }
 
@@ -151,7 +140,9 @@ if (require.main === module) {
   })
   fastify.listen(3000, err => {
     if (err) throw err
-    console.log(`Server listenting at http://localhost:${fastify.server.address().port}`)
+    console.log(
+      `Server listenting at http://localhost:${fastify.server.address().port}`
+    )
   })
 }
 
