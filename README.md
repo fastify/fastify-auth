@@ -13,7 +13,7 @@ npm i fastify-auth --save
 ```
 
 ## Usage
-As said above, `fastify-auth` does not provide an authentication strategy, so you must provide it (or them) by yourself, with a decorator or another plugin.
+As said above, `fastify-auth` does not provide an authentication strategy, so you must provide authentication by yourself, with a decorator or another plugin.
 In the following example you will find a very simple implementation that should help you understand how use this module.  
 ```js
 fastify
@@ -43,7 +43,7 @@ fastify
 ```
 Keep in mind that route definition should either be done as [a plugin](https://github.com/fastify/fastify/blob/master/docs/Plugins.md) or within `.after()` callback. For complete example implementation see [example.js](example.js).
 
-`fastify-auth` will run all your authentication methods if at least one succeed it will continue your request, otherwise it will return an error to the client. It will automatically stop as soon as a authentication succeed.
+`fastify-auth` will run all your authentication methods and your request will continue if at least one succeeds, otherwise it will return an error to the client. Any successful authentication will automatically stop `fastify-auth` from trying the rest.
 
 You can use this plugin on route level, as in the above example or on hook level, by using the `preHandler` hook:
 ```js
