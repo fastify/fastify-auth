@@ -10,7 +10,7 @@
   "types": "fastify-auth.d.ts",
   "scripts": {
     "clean": "rimraf authdb",
-    "test": "standard && tap test.js",
+    "test": "standard && tap -J ./test/*.test.js",
     "typescript": "tsc --project ./tsconfig.json"
   },
   "keywords": [
