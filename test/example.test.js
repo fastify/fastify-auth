@@ -89,23 +89,6 @@ test('Auth succesful', t => {
   })
 })
 
-test('Auth succesful (multiple)', t => {
-  t.plan(2)
-
-  fastify.inject({
-    method: 'POST',
-    url: '/auth-multiple',
-    payload: {
-      user: 'tomas',
-      password: 'a-very-secure-one'
-    }
-  }, (err, res) => {
-    t.error(err)
-    var payload = JSON.parse(res.payload)
-    t.deepEqual(payload, { hello: 'world' })
-  })
-})
-
 test('Auth not succesful', t => {
   t.plan(2)
 
@@ -123,6 +106,23 @@ test('Auth not succesful', t => {
       message: 'Token not valid',
       statusCode: 401
     })
+  })
+})
+
+test('Auth succesful (multiple)', t => {
+  t.plan(2)
+
+  fastify.inject({
+    method: 'POST',
+    url: '/auth-multiple',
+    payload: {
+      user: 'tomas',
+      password: 'a-very-secure-one'
+    }
+  }, (err, res) => {
+    t.error(err)
+    var payload = JSON.parse(res.payload)
+    t.deepEqual(payload, { hello: 'world' })
   })
 })
 

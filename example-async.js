@@ -29,7 +29,7 @@ function build (opts) {
 
     return new Promise(function (resolve, reject) {
       jwt.verify(request.req.headers['auth'], function (err, decoded) {
-        if (err) { reject(err) };
+        if (err) { return reject(err) };
         resolve(decoded)
       })
     }).then(function (decoded) {
@@ -39,7 +39,8 @@ function build (opts) {
             throw new Error('Token not valid')
           }
         })
-    }).catch(function () {
+    }).catch(function (error) {
+      request.log.error(error)
       throw new Error('Token not valid')
     })
   }
@@ -140,9 +141,7 @@ if (require.main === module) {
   })
   fastify.listen(3000, err => {
     if (err) throw err
-    console.log(
-      `Server listenting at http://localhost:${fastify.server.address().port}`
-    )
+    console.log(`Server listenting at http://localhost:${fastify.server.address().port}`)
   })
 }
 
