@@ -21,9 +21,10 @@ fastify
     // your validation logic
     done() // pass an error if the authentication fails
   })
-  .decorate('verifyUserAndPassword', function (request, reply, done) {
-    // your validation logic
-    done() // pass an error if the authentication fails
+  .decorate('verifyUserAndPassword', async function (request, reply) {
+    // your async validation logic
+    await validation()
+    // throws an error if the authentication fails
   })
   .register(require('fastify-auth'))
   .after(() => {
@@ -41,6 +42,10 @@ fastify
     })
   })
 ```
+
+This plugin support `callback` and `Promise` returned by the functions. Note that an `async` function
+doesn't have to use the `done` parameter.
+
 Keep in mind that route definition should either be done as [a plugin](https://github.com/fastify/fastify/blob/master/docs/Plugins.md) or within `.after()` callback. For complete example implementation see [example.js](example.js).
 
 `fastify-auth` will run all your authentication methods and your request will continue if at least one succeeds, otherwise it will return an error to the client. Any successful authentication will automatically stop `fastify-auth` from trying the rest.
