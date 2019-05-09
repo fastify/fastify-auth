@@ -19,6 +19,7 @@ In the following example you will find a very simple implementation that should 
 fastify
   .decorate('verifyJWTandLevel', function (request, reply, done) {
     // your validation logic
+    // this callback function must call the `done` function when it complete the validation logic
     done() // pass an error if the authentication fails
   })
   .decorate('verifyUserAndPassword', async function (request, reply) {
