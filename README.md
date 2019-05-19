@@ -41,6 +41,38 @@ fastify
     })
   })
 ```
+
+This plugin support `callback` and `Promise` returned by the functions. Note that an `async` function doesn't have to use the `done` parameter:
+
+```js
+fastify
+  .decorate('asyncVerifyJWTandLevel', async function (request, reply) {
+    // your async validation logic
+    await validation()
+    // throws an error if the authentication fails
+  })
+  .decorate('asyncVerifyUserAndPassword', function (request, reply) {
+    // return a promise that throws an error if the authentication fails
+    return myPromiseValidation()
+  })
+  .register(require('fastify-auth'))
+  .after(() => {
+    fastify.route({
+      method: 'POST',
+      url: '/auth-multiple',
+      beforeHandler: fastify.auth([
+        fastify.asyncVerifyJWTandLevel,
+        fastify.asyncVerifyUserAndPassword
+      ]),
+      handler: (req, reply) => {
+        req.log.info('Auth route')
+        reply.send({ hello: 'world' })
+      }
+    })
+  })
+```
+
+
 Keep in mind that route definition should either be done as [a plugin](https://github.com/fastify/fastify/blob/master/docs/Plugins.md) or within `.after()` callback. For complete example implementation see [example.js](example.js).
 
 `fastify-auth` will run all your authentication methods and your request will continue if at least one succeeds, otherwise it will return an error to the client. Any successful authentication will automatically stop `fastify-auth` from trying the rest.
