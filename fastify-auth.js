@@ -16,7 +16,7 @@ function auth (functions, options) {
     throw new Error('Missing auth functions')
   }
   if (options === undefined) {
-    options = {relation: 'or'}
+    options = { relation: 'or' }
   } else if (options.relation === undefined) {
     options.relation = 'or'
   } else {
