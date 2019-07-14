@@ -19,7 +19,7 @@ function build (opts) {
     const level = this.level
 
     if (request.body && request.body.failureWithReply) {
-      reply.code(401).send({ 'error': 'Unauthorized' })
+      reply.code(401).send({ error: 'Unauthorized' })
       return done(new Error())
     }
 
