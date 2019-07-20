@@ -77,7 +77,7 @@ function auth (functions, options) {
       }
     }
 
-    this.onAuth = function onAuth (err) {
+    this.onAuth = function onAuth (err, results) {
       if (that.options.relation === 'or') {
         if (err) {
           return that.nextAuth(err)
@@ -88,6 +88,7 @@ function auth (functions, options) {
       } else {
         if (err) {
           instance.release(that)
+          that.reply.code(401)
           return that.done(err)
         }
 
