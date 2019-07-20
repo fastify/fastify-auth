@@ -14,7 +14,7 @@ function build (opts) {
   fastify.decorate('verifyBig', verifyBig)
 
   function verifyNumber (request, reply, done) {
-    let n = request.body['n']
+    const n = request.body['n']
 
     if (typeof (n) !== 'number') {
       // reply.code(401).send({ error: 'Unauthorized', message: 'type of `n` is not `number`' })
@@ -25,7 +25,7 @@ function build (opts) {
   }
 
   function verifyOdd (request, reply, done) {
-    let n = request.body['n']
+    const n = request.body['n']
 
     if (n % 2 === 0) {
       // reply.code(401).send({ error: 'Unauthorized', message: '`n` is not odd' })
@@ -36,7 +36,7 @@ function build (opts) {
   }
 
   function verifyBig (request, reply, done) {
-    let n = request.body['n']
+    const n = request.body['n']
 
     if (n < 100) {
       // reply.code(401).send({ error: 'Unauthorized', message: '`n` is not big' })
