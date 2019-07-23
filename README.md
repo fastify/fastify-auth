@@ -58,7 +58,7 @@ fastify
     fastify.route({
       method: 'POST',
       url: '/auth-multiple',
-      beforeHandler: fastify.auth([
+      preHandler: fastify.auth([
         fastify.verifyAdmin,
         fastify.verifyReputation
       ], {
