@@ -17,7 +17,6 @@ function build (opts) {
     const n = request.body['n']
 
     if (typeof (n) !== 'number') {
-      // reply.code(401).send({ error: 'Unauthorized', message: 'type of `n` is not `number`' })
       return done(new Error('type of `n` is not `number`'))
     }
 
@@ -28,7 +27,6 @@ function build (opts) {
     const n = request.body['n']
 
     if (n % 2 === 0) {
-      // reply.code(401).send({ error: 'Unauthorized', message: '`n` is not odd' })
       return done(new Error('`n` is not odd'))
     }
 
@@ -39,7 +37,6 @@ function build (opts) {
     const n = request.body['n']
 
     if (n < 100) {
-      // reply.code(401).send({ error: 'Unauthorized', message: '`n` is not big' })
       return done(new Error('`n` is not big'))
     }
 

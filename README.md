@@ -30,7 +30,7 @@ fastify
     fastify.route({
       method: 'POST',
       url: '/auth-multiple',
-      beforeHandler: fastify.auth([
+      preHandler: fastify.auth([
         fastify.verifyJWTandLevel,
         fastify.verifyUserAndPassword
       ]),
@@ -58,7 +58,7 @@ fastify
     fastify.route({
       method: 'POST',
       url: '/auth-multiple',
-      beforeHandler: fastify.auth([
+      preHandler: fastify.auth([
         fastify.verifyAdmin,
         fastify.verifyReputation
       ], {
@@ -91,7 +91,7 @@ fastify
     fastify.route({
       method: 'POST',
       url: '/auth-multiple',
-      beforeHandler: fastify.auth([
+      preHandler: fastify.auth([
         fastify.asyncVerifyJWTandLevel,
         fastify.asyncVerifyUserAndPassword
       ]),
