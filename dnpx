@@ -1,9 +1,0 @@
-#!/bin/sh
-
-docker run -it \
-    --rm \
-    -w /app \
-    -v `pwd`:/app \
-    -p 3000:3000 \
-    node:10 \
-    npx $@

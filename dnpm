@@ -1,8 +1,0 @@
-#!/bin/sh
-
-docker run -it \
-    --rm \
-    -w /app \
-    -v `pwd`:/app \
-    node:10 \
-    npm $@
