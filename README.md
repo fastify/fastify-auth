@@ -30,7 +30,7 @@ fastify
     fastify.route({
       method: 'POST',
       url: '/auth-multiple',
-      beforeHandler: fastify.auth([
+      preHandler: fastify.auth([
         fastify.verifyJWTandLevel,
         fastify.verifyUserAndPassword
       ]),
@@ -41,6 +41,37 @@ fastify
     })
   })
 ```
+
+And the default relationship of these customized authentication is `or`, while we could also use `and`. for eg
+```js
+fastify
+  .decorate('verifyAdmin', function (request, reply, done) {
+    // your validation logic
+    done() // pass an error if the authentication fails
+  })
+  .decorate('verifyReputation', function (request, reply, done) {
+    // your validation logic
+    done() // pass an error if the authentication fails
+  })
+  .register(require('fastify-auth'))
+  .after(() => {
+    fastify.route({
+      method: 'POST',
+      url: '/auth-multiple',
+      preHandler: fastify.auth([
+        fastify.verifyAdmin,
+        fastify.verifyReputation
+      ], {
+        relation: 'and'
+      }),
+      handler: (req, reply) => {
+        req.log.info('Auth route')
+        reply.send({ hello: 'world' })
+      }
+    })
+  })
+```
+For more examples, please check `example-composited.js`
 
 This plugin support `callback` and `Promise` returned by the functions. Note that an `async` function doesn't have to use the `done` parameter:
 
@@ -60,7 +91,7 @@ fastify
     fastify.route({
       method: 'POST',
       url: '/auth-multiple',
-      beforeHandler: fastify.auth([
+      preHandler: fastify.auth([
         fastify.asyncVerifyJWTandLevel,
         fastify.asyncVerifyUserAndPassword
       ]),

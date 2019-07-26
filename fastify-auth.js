@@ -8,12 +8,21 @@ function checkAuth (fastify, opts, next) {
   next()
 }
 
-function auth (functions) {
+function auth (functions, options) {
   if (!Array.isArray(functions)) {
     throw new Error('You must give an array of functions to the auth function')
   }
   if (!functions.length) {
     throw new Error('Missing auth functions')
+  }
+  if (options === undefined) {
+    options = { relation: 'or' }
+  } else if (options.relation === undefined) {
+    options.relation = 'or'
+  } else {
+    if (options.relation !== 'or' && options.relation !== 'and') {
+      throw new Error('The value of options.relation should be one of [\'or\', \'and\']')
+    }
   }
 
   for (var i = 0; i < functions.length; i++) {
@@ -29,17 +38,19 @@ function auth (functions) {
     obj.reply = reply
     obj.done = done
     obj.functions = this.functions
+    obj.options = this.options
     obj.i = 0
 
     obj.nextAuth()
   }
 
-  return _auth.bind({ functions })
+  return _auth.bind({ functions, options })
 
   function Auth () {
     this.next = null
     this.i = 0
     this.functions = []
+    this.options = {}
     this.request = null
     this.reply = null
     this.done = null
@@ -66,13 +77,23 @@ function auth (functions) {
       }
     }
 
-    this.onAuth = function onAuth (err) {
-      if (err) {
+    this.onAuth = function onAuth (err, results) {
+      if (that.options.relation === 'or') {
+        if (err) {
+          return that.nextAuth(err)
+        }
+
+        instance.release(that)
+        return that.done()
+      } else {
+        if (err) {
+          instance.release(that)
+          that.reply.code(401)
+          return that.done(err)
+        }
+
         return that.nextAuth(err)
       }
-
-      instance.release(that)
-      return that.done()
     }
   }
 }
