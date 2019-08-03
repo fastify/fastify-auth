@@ -66,3 +66,6 @@ typings/
 # test db
 authdb
 authdb-async
+
+# don't lock deps
+package-lock.json
