@@ -42,11 +42,11 @@ function build (opts) {
       return done(new Error())
     }
 
-    if (!request.req.headers['auth']) {
+    if (!request.req.headers.auth) {
       return done(new Error('Missing token header'))
     }
 
-    jwt.verify(request.req.headers['auth'], onVerify)
+    jwt.verify(request.req.headers.auth, onVerify)
 
     function onVerify (err, decoded) {
       if (err || !decoded.user || !decoded.password) {

@@ -14,7 +14,7 @@ function build (opts) {
   fastify.decorate('verifyBig', verifyBig)
 
   function verifyNumber (request, reply, done) {
-    const n = request.body['n']
+    const n = request.body.n
 
     if (typeof (n) !== 'number') {
       return done(new Error('type of `n` is not `number`'))
@@ -24,7 +24,7 @@ function build (opts) {
   }
 
   function verifyOdd (request, reply, done) {
-    const n = request.body['n']
+    const n = request.body.n
 
     if (n % 2 === 0) {
       return done(new Error('`n` is not odd'))
@@ -34,7 +34,7 @@ function build (opts) {
   }
 
   function verifyBig (request, reply, done) {
-    const n = request.body['n']
+    const n = request.body.n
 
     if (n < 100) {
       return done(new Error('`n` is not big'))
