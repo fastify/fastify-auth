@@ -23,12 +23,12 @@ function build (opts) {
       return Promise.reject(new Error())
     }
 
-    if (!request.req.headers['auth']) {
+    if (!request.req.headers.auth) {
       return Promise.reject(new Error('Missing token header'))
     }
 
     return new Promise(function (resolve, reject) {
-      jwt.verify(request.req.headers['auth'], function (err, decoded) {
+      jwt.verify(request.req.headers.auth, function (err, decoded) {
         if (err) { return reject(err) };
         resolve(decoded)
       })
