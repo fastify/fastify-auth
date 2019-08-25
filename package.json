@@ -42,7 +42,8 @@
   },
   "greenkeeper": {
     "ignore": [
-      "tap"
+      "tap",
+      "rimraf"
     ]
   }
 }
