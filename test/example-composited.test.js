@@ -149,7 +149,7 @@ test('And Relation failed for second check', t => {
 })
 
 test('And Relation success', t => {
-  t.plan(2)
+  t.plan(3)
 
   fastify.inject({
     method: 'POST',
@@ -161,11 +161,12 @@ test('And Relation success', t => {
     t.error(err)
     var payload = JSON.parse(res.payload)
     t.deepEqual(payload, { hello: 'world' })
+    t.equal(res.statusCode, 200)
   })
 })
 
 test('Or Relation success under first case', t => {
-  t.plan(2)
+  t.plan(3)
 
   fastify.inject({
     method: 'POST',
@@ -177,11 +178,12 @@ test('Or Relation success under first case', t => {
     t.error(err)
     var payload = JSON.parse(res.payload)
     t.deepEqual(payload, { hello: 'world' })
+    t.equal(res.statusCode, 200)
   })
 })
 
 test('Or Relation success under second case', t => {
-  t.plan(2)
+  t.plan(3)
 
   fastify.inject({
     method: 'POST',
@@ -193,6 +195,7 @@ test('Or Relation success under second case', t => {
     t.error(err)
     var payload = JSON.parse(res.payload)
     t.deepEqual(payload, { hello: 'world' })
+    t.equal(res.statusCode, 200)
   })
 })
 
