@@ -125,7 +125,7 @@ fastify.route({
 })
 ```
 
-The difference between the two approaches is that if you use the `beforeHandler` the authentication will run just for the selected route, while if you use the `preHandler` hook the authentication will run for all the routes declared inside the current plugin (and its sons).
+The difference between the two approaches is that if you use the `preHandler` the authentication will run just for the selected route, while if you use the `preHandler` hook the authentication will run for all the routes declared inside the current plugin (and its sons).
 
 ## Acknowledgements
 
