@@ -61,7 +61,7 @@ function auth (functions, options) {
       var func = that.functions[that.i++]
 
       if (!func) {
-        if (!that.reply.res.statusCode || that.reply.res.statusCode < 400) {
+        if (err && (!that.reply.res.statusCode || that.reply.res.statusCode < 400)) {
           that.reply.code(401)
         }
 
