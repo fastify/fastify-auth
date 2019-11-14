@@ -32,7 +32,10 @@ declare module 'fastify' {
     HttpResponse = ServerResponse
   > {
     auth(
-      functions: fastifyAuth.AuthFunction[]
+      functions: fastifyAuth.AuthFunction[],
+      options?: {
+        relation: 'and' | 'or'
+      }
     ): FastifyMiddleware<
       HttpServer,
       HttpRequest,
