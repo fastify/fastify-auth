@@ -20,5 +20,5 @@ app.register(fastifyAuth).after((err) => {
       done(new Error());
       done();
     },
-  ]);
+  ], {relation: 'or'});
 });
