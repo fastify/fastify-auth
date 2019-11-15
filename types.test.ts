@@ -21,4 +21,20 @@ app.register(fastifyAuth).after((err) => {
       done();
     },
   ], {relation: 'or'});
+  app.auth([
+    (
+      _request: fastify.FastifyRequest<
+        http.IncomingMessage,
+        fastify.DefaultQuery,
+        fastify.DefaultParams,
+        fastify.DefaultHeaders,
+        any
+      >,
+      _reply: fastify.FastifyReply<http.ServerResponse>,
+      done
+    ) => {
+      done(new Error());
+      done();
+    },
+  ]);
 });
