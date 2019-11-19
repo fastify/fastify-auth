@@ -19,8 +19,7 @@ function auth (functions, opts) {
   const options = Object.assign({
     relation: 'or',
     run: null
-  }, opts
-  )
+  }, opts)
 
   if (options.relation !== 'or' && options.relation !== 'and') {
     throw new Error('The value of options.relation should be one of [\'or\', \'and\']')
