@@ -1,5 +1,5 @@
 {
-  "files": ["fastify-auth.d.ts"],
+  "files": ["../../fastify-auth.d.ts"],
   "compilerOptions": {
     "target": "es2017",
     "lib": ["es2017"],

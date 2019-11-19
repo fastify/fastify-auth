@@ -1,20 +1,21 @@
 # fastify-auth
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/fastify/fastify-auth.svg)](https://greenkeeper.io/)
-
-[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/)  [![Build Status](https://travis-ci.org/fastify/fastify-auth.svg?branch=master)](https://travis-ci.org/fastify/fastify-auth)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/)  
+[![Build Status](https://travis-ci.org/fastify/fastify-auth.svg?branch=master)](https://travis-ci.org/fastify/fastify-auth)
 
 This module does not provide an authentication strategy, but it provides a very fast utility to handle authentication (also multiple strategies) in your routes, without adding overhead.  
 Check out the complete example [here](https://github.com/fastify/fastify-auth/blob/master/example.js).
 
 ## Install
 ```
-npm i fastify-auth --save
+npm i fastify-auth
 ```
 
 ## Usage
 As said above, `fastify-auth` does not provide an authentication strategy, so you must provide authentication by yourself, with a decorator or another plugin.
 In the following example you will find a very simple implementation that should help you understand how use this module.  
+
 ```js
 fastify
   .decorate('verifyJWTandLevel', function (request, reply, done) {
@@ -71,7 +72,7 @@ fastify
     })
   })
 ```
-For more examples, please check `example-composited.js`
+_For more examples, please check `example-composited.js`_
 
 This plugin support `callback` and `Promise` returned by the functions. Note that an `async` function doesn't have to use the `done` parameter:
 
@@ -104,9 +105,29 @@ fastify
 ```
 
 
-Keep in mind that route definition should either be done as [a plugin](https://github.com/fastify/fastify/blob/master/docs/Plugins.md) or within `.after()` callback. For complete example implementation see [example.js](example.js).
+Keep in mind that route definition should either be done as [a plugin](https://github.com/fastify/fastify/blob/master/docs/Plugins.md) or within `.after()` callback.
+For complete example implementation see [example.js](example.js).
 
-`fastify-auth` will run all your authentication methods and your request will continue if at least one succeeds, otherwise it will return an error to the client. Any successful authentication will automatically stop `fastify-auth` from trying the rest.
+`fastify-auth` will run all your authentication methods and your request will continue if at least one succeds, otherwise it will return an error to the client.
+Any successful authentication will automatically stop `fastify-auth` from trying the rest, unless you provide the `run: 'all'` parameter:
+
+```js
+fastify.route({
+  method: 'GET',
+  url: '/run-all',
+  preHandler: fastify.auth([
+    (request, reply, done) => { console.log('executed 1'); done() },
+    (request, reply, done) => { console.log('executed 2'); done() },
+    (request, reply, done) => { console.log('executed 3'); done(new Error('you are not authenticated')) },
+    (request, reply, done) => { console.log('executed 4'); done() },
+    (request, reply, done) => { console.log('executed 5'); done(new Error('you shall not pass')) }
+  ], { run: 'all' }),
+  handler: (req, reply) => { reply.send({ hello: 'world' }) }
+})
+```
+This example will show all the console logs and will reply always with `401: you are not authenticated`.
+The `run` parameter is useful if you are adding to the request business data read from auth-tokens.
+
 
 You can use this plugin on route level, as in the above example or on hook level, by using the `preHandler` hook:
 ```js

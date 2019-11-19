@@ -17,29 +17,35 @@ function build (opts) {
     const n = request.body.n
 
     if (typeof (n) !== 'number') {
+      request.number = false
       return done(new Error('type of `n` is not `number`'))
     }
 
+    request.number = true
     return done()
   }
 
   function verifyOdd (request, reply, done) {
     const n = request.body.n
 
-    if (n % 2 === 0) {
+    if (typeof (n) !== 'number' || n % 2 === 0) {
+      request.odd = false
       return done(new Error('`n` is not odd'))
     }
 
+    request.odd = true
     return done()
   }
 
   function verifyBig (request, reply, done) {
     const n = request.body.n
 
-    if (n < 100) {
+    if (typeof (n) !== 'number' || n < 100) {
+      request.big = false
       return done(new Error('`n` is not big'))
     }
 
+    request.big = true
     return done()
   }
 
@@ -89,6 +95,34 @@ function build (opts) {
       handler: (req, reply) => {
         req.log.info('Auth route')
         reply.send({ hello: 'world' })
+      }
+    })
+
+    fastify.route({
+      method: 'POST',
+      url: '/run-all-or',
+      preHandler: fastify.auth([fastify.verifyOdd, fastify.verifyBig, fastify.verifyNumber], { run: 'all' }),
+      handler: (req, reply) => {
+        req.log.info('Auth route')
+        reply.send({
+          odd: req.odd,
+          big: req.big,
+          number: req.number
+        })
+      }
+    })
+
+    fastify.route({
+      method: 'POST',
+      url: '/run-all-and',
+      preHandler: fastify.auth([fastify.verifyOdd, fastify.verifyBig, fastify.verifyNumber], { run: 'all', relation: 'and' }),
+      handler: (req, reply) => {
+        req.log.info('Auth route')
+        reply.send({
+          odd: req.odd,
+          big: req.big,
+          number: req.number
+        })
       }
     })
   }
