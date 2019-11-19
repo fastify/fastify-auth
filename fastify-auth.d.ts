@@ -34,7 +34,8 @@ declare module 'fastify' {
     auth(
       functions: fastifyAuth.AuthFunction[],
       options?: {
-        relation: 'and' | 'or'
+        relation?: 'and' | 'or',
+        run?: 'all'
       }
     ): FastifyMiddleware<
       HttpServer,

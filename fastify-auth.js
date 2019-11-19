@@ -8,21 +8,24 @@ function checkAuth (fastify, opts, next) {
   next()
 }
 
-function auth (functions, options) {
+function auth (functions, opts) {
   if (!Array.isArray(functions)) {
     throw new Error('You must give an array of functions to the auth function')
   }
   if (!functions.length) {
     throw new Error('Missing auth functions')
   }
-  if (options === undefined) {
-    options = { relation: 'or' }
-  } else if (options.relation === undefined) {
-    options.relation = 'or'
-  } else {
-    if (options.relation !== 'or' && options.relation !== 'and') {
-      throw new Error('The value of options.relation should be one of [\'or\', \'and\']')
-    }
+
+  const options = Object.assign({
+    relation: 'or',
+    run: null
+  }, opts)
+
+  if (options.relation !== 'or' && options.relation !== 'and') {
+    throw new Error('The value of options.relation should be one of [\'or\', \'and\']')
+  }
+  if (options.run && options.run !== 'all') {
+    throw new Error('The value of options.run must be \'all\'')
   }
 
   for (var i = 0; i < functions.length; i++) {
@@ -40,6 +43,8 @@ function auth (functions, options) {
     obj.functions = this.functions
     obj.options = this.options
     obj.i = 0
+    obj.start = true
+    obj.firstResult = null
 
     obj.nextAuth()
   }
@@ -49,11 +54,13 @@ function auth (functions, options) {
   function Auth () {
     this.next = null
     this.i = 0
+    this.start = true
     this.functions = []
     this.options = {}
     this.request = null
     this.reply = null
     this.done = null
+    this.firstResult = null
 
     var that = this
 
@@ -65,8 +72,7 @@ function auth (functions, options) {
           that.reply.code(401)
         }
 
-        instance.release(that)
-        that.done(err)
+        that.completeAuth(err)
         return
       }
 
@@ -86,17 +92,29 @@ function auth (functions, options) {
         if (that.i > 0 && that.reply.res.statusCode && that.reply.res.statusCode >= 400) {
           that.reply.code(200)
         }
-        instance.release(that)
-        return that.done()
+        return that.completeAuth()
       } else {
         if (err) {
-          instance.release(that)
           that.reply.code(401)
-          return that.done(err)
+          return that.completeAuth(err)
         }
 
         return that.nextAuth(err)
       }
+    }
+
+    this.completeAuth = function (err) {
+      if (that.start) {
+        that.start = false
+        that.firstResult = err
+      }
+
+      if (that.options.run === 'all' && that.i < that.functions.length) {
+        return that.nextAuth(err)
+      }
+
+      that.done(that.firstResult)
+      instance.release(that)
     }
   }
 }
