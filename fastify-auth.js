@@ -68,10 +68,6 @@ function auth (functions, opts) {
       var func = that.functions[that.i++]
 
       if (!func) {
-        if (err && (!that.reply.res.statusCode || that.reply.res.statusCode < 400)) {
-          that.reply.code(401)
-        }
-
         that.completeAuth(err)
         return
       }
@@ -95,7 +91,6 @@ function auth (functions, opts) {
         return that.completeAuth()
       } else {
         if (err) {
-          that.reply.code(401)
           return that.completeAuth(err)
         }
 
@@ -113,6 +108,9 @@ function auth (functions, opts) {
         return that.nextAuth(err)
       }
 
+      if (that.firstResult && (!that.reply.res.statusCode || that.reply.res.statusCode < 400)) {
+        that.reply.code(401)
+      }
       that.done(that.firstResult)
       instance.release(that)
     }
