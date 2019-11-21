@@ -85,9 +85,6 @@ function auth (functions, opts) {
           return that.nextAuth(err)
         }
 
-        if (that.i > 0 && that.reply.res.statusCode && that.reply.res.statusCode >= 400) {
-          that.reply.code(200)
-        }
         return that.completeAuth()
       } else {
         if (err) {
@@ -110,7 +107,10 @@ function auth (functions, opts) {
 
       if (that.firstResult && (!that.reply.res.statusCode || that.reply.res.statusCode < 400)) {
         that.reply.code(401)
+      } else if (!that.firstResult && that.reply.res.statusCode && that.reply.res.statusCode >= 400) {
+        that.reply.code(200)
       }
+
       that.done(that.firstResult)
       instance.release(that)
     }
