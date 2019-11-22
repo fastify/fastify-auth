@@ -423,3 +423,28 @@ test('And Relation run all', t => {
     })
   })
 })
+
+test('Clean status code settle by user', t => {
+  t.plan(5)
+
+  const fastify = build()
+
+  fastify.after(() => {
+    fastify.route({
+      method: 'GET',
+      url: '/run-all-status',
+      preHandler: fastify.auth([
+        (req, reply, done) => { t.pass('executed 1'); done() },
+        (req, reply, done) => { t.pass('executed 2'); reply.code(400); done(new Error('last')) }
+      ], { relation: 'or', run: 'all' }),
+      handler: (req, reply) => { reply.send({ hello: 'world' }) }
+    })
+  })
+
+  fastify.inject('/run-all-status', (err, res) => {
+    t.error(err)
+    t.equals(res.statusCode, 200)
+    var payload = JSON.parse(res.payload)
+    t.deepEqual(payload, { hello: 'world' })
+  })
+})
