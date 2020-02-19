@@ -14,7 +14,7 @@ npm i fastify-auth
 
 ## Usage
 As said above, `fastify-auth` does not provide an authentication strategy, so you must provide authentication by yourself, with a decorator or another plugin.
-In the following example you will find a very simple implementation that should help you understand how use this module.  
+In the following example you will find a very simple implementation that should help you understand how to use this module.  
 
 ```js
 fastify
