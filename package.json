@@ -6,8 +6,8 @@
     "type": "git",
     "url": "git+https://github.com/fastify/fastify-auth.git"
   },
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "auth.js",
+  "types": "auth.d.ts",
   "scripts": {
     "clean": "rimraf authdb",
     "test": "npm run test:unit && npm run test:typescript",
@@ -36,12 +36,12 @@
     "rimraf": "^2.6.3",
     "standard": "^14.0.0",
     "tap": "^12.7.0",
-    "typescript": "^3.1.6"
+    "tsd": "^0.11.0",
+    "typescript": "^3.8.3"
   },
   "dependencies": {
     "fastify-plugin": "^1.5.0",
-    "reusify": "^1.0.4",
-    "tsd": "^0.11.0"
+    "reusify": "^1.0.4"
   },
   "tsd": {
     "directory": "test"

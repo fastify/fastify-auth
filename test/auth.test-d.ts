@@ -1,5 +1,5 @@
 import fastify, { FastifyRequest, FastifyReply } from 'fastify';
-import fastifyAuth from '..'
+import fastifyAuth from '../auth'
 import { expectType } from 'tsd';
 
 const app = fastify();

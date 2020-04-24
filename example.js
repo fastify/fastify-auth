@@ -27,7 +27,7 @@ function build (opts) {
   fastify
     .register(require('fastify-jwt'), { secret: 'supersecret' })
     .register(require('fastify-leveldb'), { name: 'authdb' })
-    .register(require('./')) // just 'fastify-auth' IRL
+    .register(require('./auth')) // just 'fastify-auth' IRL
     .after(routes)
 
   fastify.decorate('verifyJWTandLevelDB', verifyJWTandLevelDB)

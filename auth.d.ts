@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { FastifyPlugin, FastifyRequest, FastifyReply } from 'fastify';
 
 export type FastifyAuthFunction = (
