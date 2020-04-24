@@ -2,7 +2,7 @@
 
 const { test } = require('tap')
 const Fastify = require('fastify')
-const fastifyAuth = require('../fastify-auth')
+const fastifyAuth = require('../')
 
 test('Clean status code through auth pipeline', t => {
   t.plan(3)
