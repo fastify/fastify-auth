@@ -117,4 +117,4 @@ function auth (functions, opts) {
   }
 }
 
-module.exports = fp(checkAuth, '>=3')
+module.exports = fp(checkAuth, '3.x')
