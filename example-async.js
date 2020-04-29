@@ -8,7 +8,7 @@ function build (opts) {
   fastify
     .register(require('fastify-jwt'), { secret: 'supersecret' })
     .register(require('fastify-leveldb'), { name: 'authdb-async' })
-    .register(require('./fastify-auth'))
+    .register(require('./auth'))
     .after(routes)
 
   fastify.decorate('verifyJWTandLevel', verifyJWTandLevel)

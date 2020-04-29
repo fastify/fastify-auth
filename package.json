@@ -6,12 +6,14 @@
     "type": "git",
     "url": "git+https://github.com/fastify/fastify-auth.git"
   },
-  "main": "fastify-auth.js",
-  "types": "fastify-auth.d.ts",
+  "main": "auth.js",
+  "types": "auth.d.ts",
   "scripts": {
     "clean": "rimraf authdb",
-    "test": "standard && tap -J ./test/*.test.js && npm run typescript",
-    "typescript": "tsc --project ./test/types/tsconfig.json"
+    "test": "npm run test:unit && npm run test:typescript",
+    "standard": "standard",
+    "test:unit": "tap -J ./test/*.test.js",
+    "test:typescript": "tsd"
   },
   "keywords": [
     "fastify",
@@ -27,23 +29,21 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "fastify": "^2.0.0",
-    "fastify-jwt": "^1.0.0",
+    "fastify": "^3.0.0-rc.1",
+    "fastify-jwt": "^2.0.0",
     "fastify-leveldb": "^2.1.0",
     "pre-commit": "^1.2.2",
     "rimraf": "^2.6.3",
     "standard": "^14.0.0",
     "tap": "^12.7.0",
-    "typescript": "^3.1.6"
+    "tsd": "^0.11.0",
+    "typescript": "^3.8.3"
   },
   "dependencies": {
-    "fastify-plugin": "^1.5.0",
+    "fastify-plugin": "^2.0.0",
     "reusify": "^1.0.4"
   },
-  "greenkeeper": {
-    "ignore": [
-      "tap",
-      "rimraf"
-    ]
+  "tsd": {
+    "directory": "test"
   }
 }
