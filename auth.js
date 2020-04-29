@@ -105,9 +105,9 @@ function auth (functions, opts) {
         return that.nextAuth(err)
       }
 
-      if (that.firstResult && (!that.reply.res.statusCode || that.reply.res.statusCode < 400)) {
+      if (that.firstResult && (!that.reply.raw.statusCode || that.reply.raw.statusCode < 400)) {
         that.reply.code(401)
-      } else if (!that.firstResult && that.reply.res.statusCode && that.reply.res.statusCode >= 400) {
+      } else if (!that.firstResult && that.reply.raw.statusCode && that.reply.raw.statusCode >= 400) {
         that.reply.code(200)
       }
 

@@ -5,30 +5,29 @@ const Fastify = require('fastify')
 function build (opts) {
   const fastify = Fastify(opts)
 
-  fastify
-    .register(require('fastify-jwt'), { secret: 'supersecret' })
-    .register(require('fastify-leveldb'), { name: 'authdb-async' })
-    .register(require('./auth'))
-    .after(routes)
+  fastify.register(require('fastify-jwt'), { secret: 'supersecret' })
+  fastify.register(require('fastify-leveldb'), { name: 'authdb-async' })
+  fastify.register(require('./auth'))
+  fastify.after(routes)
 
   fastify.decorate('verifyJWTandLevel', verifyJWTandLevel)
   fastify.decorate('verifyUserAndPassword', verifyUserAndPassword)
 
   function verifyJWTandLevel (request, reply) {
     const jwt = this.jwt
-    const level = this.level
+    const level = this.level['authdb-async']
 
     if (request.body && request.body.failureWithReply) {
       reply.code(401).send({ error: 'Unauthorized' })
       return Promise.reject(new Error())
     }
 
-    if (!request.req.headers.auth) {
+    if (!request.raw.headers.auth) {
       return Promise.reject(new Error('Missing token header'))
     }
 
     return new Promise(function (resolve, reject) {
-      jwt.verify(request.req.headers.auth, function (err, decoded) {
+      jwt.verify(request.raw.headers.auth, function (err, decoded) {
         if (err) { return reject(err) };
         resolve(decoded)
       })
@@ -46,7 +45,7 @@ function build (opts) {
   }
 
   function verifyUserAndPassword (request, reply, done) {
-    const level = this.level
+    const level = this.level['authdb-async']
 
     level.get(request.body.user, onUser)
 
@@ -82,7 +81,7 @@ function build (opts) {
       },
       handler: (req, reply) => {
         req.log.info('Creating new user')
-        fastify.level.put(req.body.user, req.body.password, onPut)
+        fastify.level['authdb-async'].put(req.body.user, req.body.password, onPut)
 
         function onPut (err) {
           if (err) return reply.send(err)
