@@ -1,6 +1,6 @@
 # fastify-auth
 
-![.github/workflows/ci.yml](https://github.com/fastify/fastify-auth/workflows/.github/workflows/ci.yml/badge.svg)
+![CI](https://github.com/fastify/fastify-auth/workflows/CI/badge.svg)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/)  
 
 This module does not provide an authentication strategy, but it provides a very fast utility to handle authentication (also multiple strategies) in your routes, without adding overhead.  
