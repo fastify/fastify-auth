@@ -29,7 +29,7 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "fastify": "^3.0.0-rc.1",
+    "fastify": "^3.0.0-rc.4",
     "fastify-jwt": "^2.0.0",
     "fastify-leveldb": "^3.0.0",
     "pre-commit": "^1.2.2",
