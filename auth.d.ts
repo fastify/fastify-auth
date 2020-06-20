@@ -1,4 +1,4 @@
-import { FastifyPlugin, FastifyRequest, FastifyReply } from 'fastify';
+import { FastifyPlugin, FastifyRequest, FastifyReply, preHandlerHookHandler } from 'fastify';
 
 export type FastifyAuthFunction = (
   request: FastifyRequest,
@@ -14,7 +14,7 @@ declare module 'fastify' {
         relation?: 'and' | 'or',
         run?: 'all'
       }
-    ): void;
+    ): preHandlerHookHandler;
   }
 }
 
