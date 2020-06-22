@@ -1,4 +1,4 @@
-import fastify, { FastifyRequest, FastifyReply } from 'fastify';
+import fastify, { FastifyRequest, FastifyReply, preHandlerHookHandler } from 'fastify';
 import fastifyAuth from '../auth'
 import { expectType } from 'tsd';
 
@@ -28,4 +28,8 @@ app.register(fastifyAuth).after((err) => {
 			expectType<Done>(done)
     },
   ]);
+  const auth = app.auth([(request, reply, done) => {}]);
+  expectType<preHandlerHookHandler>(auth);
+  app.get('/secret', {preHandler: auth}, (request, reply) => {});
+  app.get('/private', {preHandler: [auth]}, (request, reply) => {});
 });
