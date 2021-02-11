@@ -12,6 +12,7 @@
     "clean": "rimraf authdb",
     "standard": "standard",
     "test": "npm run test:unit && npm run test:typescript",
+    "test:ci": "standard && tap -J ./test/*.test.js --coverage-report=lcovonly && npm run test:typescript",
     "test:typescript": "tsd",
     "test:unit": "tap -J ./test/*.test.js"
   },
