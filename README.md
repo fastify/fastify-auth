@@ -13,8 +13,8 @@ npm i fastify-auth
 
 ## Usage
 As said above, `fastify-auth` does not provide an authentication strategy, so you must provide authentication by yourself, with a decorator or another plugin.
-In the following example you will find a very simple implementation that should help you understand how to use this module.  
 
+In the following example, you will find a very simple implementation that should help you understand how to use this module:
 ```js
 fastify
   .decorate('verifyJWTandLevel', function (request, reply, done) {
@@ -42,7 +42,7 @@ fastify
   })
 ```
 
-And the default relationship of these customized authentication is `or`, while we could also use `and`. for eg
+The default relationship of these customized authentication is `or`, while we could also use `and`:
 ```js
 fastify
   .decorate('verifyAdmin', function (request, reply, done) {
@@ -73,8 +73,7 @@ fastify
 ```
 _For more examples, please check `example-composited.js`_
 
-This plugin support `callback` and `Promise` returned by the functions. Note that an `async` function doesn't have to use the `done` parameter:
-
+This plugin support `callback` and `Promise` returned by the functions. Note that an `async` function does not have to use the `done` parameter:
 ```js
 fastify
   .decorate('asyncVerifyJWTandLevel', async function (request, reply) {
@@ -105,11 +104,10 @@ fastify
 
 
 Keep in mind that route definition should either be done as [a plugin](https://github.com/fastify/fastify/blob/master/docs/Plugins.md) or within `.after()` callback.
-For complete example implementation see [example.js](example.js).
+For a complete example implementation, see [example.js](example.js).
 
-`fastify-auth` will run all your authentication methods and your request will continue if at least one succeds, otherwise it will return an error to the client.
+`fastify-auth` will run all your authentication methods and your request will continue if at least one succeeds, otherwise it will return an error to the client.
 Any successful authentication will automatically stop `fastify-auth` from trying the rest, unless you provide the `run: 'all'` parameter:
-
 ```js
 fastify.route({
   method: 'GET',
@@ -150,7 +148,7 @@ The difference between the two approaches is that if you use the route level `pr
 ## Acknowledgements
 
 This project is kindly sponsored by:
-- [LetzDoIt](http://www.letzdoitapp.com/)
+- [LetzDoIt](https://www.letzdoitapp.com/)
 
 ## License
 
