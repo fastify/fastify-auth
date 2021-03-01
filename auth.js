@@ -28,14 +28,15 @@ function auth (functions, opts) {
     throw new Error('The value of options.run must be \'all\'')
   }
 
+  /* eslint-disable-next-line no-var */
   for (var i = 0; i < functions.length; i++) {
     functions[i] = functions[i].bind(this)
   }
 
-  var instance = reusify(Auth)
+  const instance = reusify(Auth)
 
   function _auth (request, reply, done) {
-    var obj = instance.get()
+    const obj = instance.get()
 
     obj.request = request
     obj.reply = reply
@@ -62,17 +63,17 @@ function auth (functions, opts) {
     this.done = null
     this.firstResult = null
 
-    var that = this
+    const that = this
 
     this.nextAuth = function nextAuth (err) {
-      var func = that.functions[that.i++]
+      const func = that.functions[that.i++]
 
       if (!func) {
         that.completeAuth(err)
         return
       }
 
-      var maybePromise = func(that.request, that.reply, that.onAuth)
+      const maybePromise = func(that.request, that.reply, that.onAuth)
 
       if (maybePromise && typeof maybePromise.then === 'function') {
         maybePromise.then(results => that.onAuth(null, results), that.onAuth)

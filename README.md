@@ -1,7 +1,10 @@
 # fastify-auth
 
 ![CI](https://github.com/fastify/fastify-auth/workflows/CI/badge.svg)
-[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/)  
+[![NPM version](https://img.shields.io/npm/v/fastify-auth.svg?style=flat)](https://www.npmjs.com/package/fastify-auth)
+[![Known Vulnerabilities](https://snyk.io/test/github/fastify/fastify-auth/badge.svg)](https://snyk.io/test/github/fastify/fastify-auth)
+[![Coverage Status](https://coveralls.io/repos/github/fastify/fastify-auth/badge.svg?branch=master)](https://coveralls.io/github/fastify/fastify-auth?branch=master)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://standardjs.com/)
 
 This module does not provide an authentication strategy, but it provides a very fast utility to handle authentication (also multiple strategies) in your routes, without adding overhead.  
 Check out the complete example [here](https://github.com/fastify/fastify-auth/blob/master/example.js).

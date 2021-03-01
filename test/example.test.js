@@ -5,8 +5,8 @@ const test = t.test
 const rimraf = require('rimraf')
 const build = require('../example')
 
-var fastify = null
-var token = null
+let fastify = null
+let token = null
 
 t.tearDown(() => {
   fastify.close()
@@ -31,7 +31,7 @@ test('Route without auth', t => {
     url: '/no-auth'
   }, (err, res) => {
     t.error(err)
-    var payload = JSON.parse(res.payload)
+    const payload = JSON.parse(res.payload)
     t.deepEqual(payload, { hello: 'world' })
   })
 })
@@ -45,7 +45,7 @@ test('Missing header', t => {
     headers: {}
   }, (err, res) => {
     t.error(err)
-    var payload = JSON.parse(res.payload)
+    const payload = JSON.parse(res.payload)
     t.deepEqual(payload, {
       error: 'Unauthorized',
       message: 'Missing token header',
@@ -66,7 +66,7 @@ test('Register user', t => {
     }
   }, (err, res) => {
     t.error(err)
-    var payload = JSON.parse(res.payload)
+    const payload = JSON.parse(res.payload)
     t.equal(res.statusCode, 200)
     token = payload.token
     t.is(typeof payload.token, 'string')
@@ -84,7 +84,7 @@ test('Auth succesful', t => {
     }
   }, (err, res) => {
     t.error(err)
-    var payload = JSON.parse(res.payload)
+    const payload = JSON.parse(res.payload)
     t.deepEqual(payload, { hello: 'world' })
   })
 })
@@ -100,7 +100,7 @@ test('Auth not succesful', t => {
     }
   }, (err, res) => {
     t.error(err)
-    var payload = JSON.parse(res.payload)
+    const payload = JSON.parse(res.payload)
     t.deepEqual(payload, {
       error: 'Unauthorized',
       message: 'Token not valid',
@@ -121,7 +121,7 @@ test('Auth succesful (multiple)', t => {
     }
   }, (err, res) => {
     t.error(err)
-    var payload = JSON.parse(res.payload)
+    const payload = JSON.parse(res.payload)
     t.deepEqual(payload, { hello: 'world' })
   })
 })
@@ -138,7 +138,7 @@ test('Auth not succesful (multiple)', t => {
     }
   }, (err, res) => {
     t.error(err)
-    var payload = JSON.parse(res.payload)
+    const payload = JSON.parse(res.payload)
     t.deepEqual(payload, {
       error: 'Unauthorized',
       message: 'Password not valid',
@@ -160,7 +160,7 @@ test('Failure with explicit reply', t => {
     }
   }, (err, res) => {
     t.error(err)
-    var payload = JSON.parse(res.payload)
+    const payload = JSON.parse(res.payload)
     t.equal(res.statusCode, 401)
     t.deepEqual(payload, { error: 'Unauthorized' })
   })

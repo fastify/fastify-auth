@@ -4,7 +4,7 @@ const t = require('tap')
 const test = t.test
 const build = require('../example-composited')
 
-var fastify = null
+let fastify = null
 
 t.tearDown(() => {
   fastify.close()
@@ -27,7 +27,7 @@ test('And Relation sucess for single case', t => {
     }
   }, (err, res) => {
     t.error(err)
-    var payload = JSON.parse(res.payload)
+    const payload = JSON.parse(res.payload)
     t.deepEqual(payload, { hello: 'world' })
   })
 })
@@ -43,7 +43,7 @@ test('And Relation failed for single case', t => {
     }
   }, (err, res) => {
     t.error(err)
-    var payload = JSON.parse(res.payload)
+    const payload = JSON.parse(res.payload)
     t.deepEqual(payload, {
       error: 'Unauthorized',
       message: '`n` is not odd',
@@ -63,7 +63,7 @@ test('Or Relation sucess for single case', t => {
     }
   }, (err, res) => {
     t.error(err)
-    var payload = JSON.parse(res.payload)
+    const payload = JSON.parse(res.payload)
     t.deepEqual(payload, { hello: 'world' })
   })
 })
@@ -79,7 +79,7 @@ test('Or Relation failed for single case', t => {
     }
   }, (err, res) => {
     t.error(err)
-    var payload = JSON.parse(res.payload)
+    const payload = JSON.parse(res.payload)
     t.deepEqual(payload, {
       error: 'Unauthorized',
       message: '`n` is not odd',
@@ -99,7 +99,7 @@ test('And Relation failed for first check', t => {
     }
   }, (err, res) => {
     t.error(err)
-    var payload = JSON.parse(res.payload)
+    const payload = JSON.parse(res.payload)
     t.deepEqual(payload, {
       error: 'Unauthorized',
       message: 'type of `n` is not `number`',
@@ -119,7 +119,7 @@ test('And Relation failed for first check', t => {
     }
   }, (err, res) => {
     t.error(err)
-    var payload = JSON.parse(res.payload)
+    const payload = JSON.parse(res.payload)
     t.deepEqual(payload, {
       error: 'Unauthorized',
       message: 'type of `n` is not `number`',
@@ -139,7 +139,7 @@ test('And Relation failed for second check', t => {
     }
   }, (err, res) => {
     t.error(err)
-    var payload = JSON.parse(res.payload)
+    const payload = JSON.parse(res.payload)
     t.deepEqual(payload, {
       error: 'Unauthorized',
       message: '`n` is not odd',
@@ -159,7 +159,7 @@ test('And Relation success', t => {
     }
   }, (err, res) => {
     t.error(err)
-    var payload = JSON.parse(res.payload)
+    const payload = JSON.parse(res.payload)
     t.deepEqual(payload, { hello: 'world' })
     t.equal(res.statusCode, 200)
   })
@@ -176,7 +176,7 @@ test('Or Relation success under first case', t => {
     }
   }, (err, res) => {
     t.error(err)
-    var payload = JSON.parse(res.payload)
+    const payload = JSON.parse(res.payload)
     t.deepEqual(payload, { hello: 'world' })
     t.equal(res.statusCode, 200)
   })
@@ -193,7 +193,7 @@ test('Or Relation success under second case', t => {
     }
   }, (err, res) => {
     t.error(err)
-    var payload = JSON.parse(res.payload)
+    const payload = JSON.parse(res.payload)
     t.deepEqual(payload, { hello: 'world' })
     t.equal(res.statusCode, 200)
   })
@@ -210,7 +210,7 @@ test('Or Relation failed for both case', t => {
     }
   }, (err, res) => {
     t.error(err)
-    var payload = JSON.parse(res.payload)
+    const payload = JSON.parse(res.payload)
     t.deepEqual(payload, {
       error: 'Unauthorized',
       message: '`n` is not big',
@@ -242,7 +242,7 @@ test('Check run all line fail with AND', t => {
   fastify.inject('/run-all-pipe', (err, res) => {
     t.error(err)
     t.equals(res.statusCode, 401)
-    var payload = JSON.parse(res.payload)
+    const payload = JSON.parse(res.payload)
     t.deepEqual(payload, {
       error: 'Unauthorized',
       message: 'second',
@@ -274,7 +274,7 @@ test('Check run all line with AND', t => {
   fastify.inject('/run-all-pipe', (err, res) => {
     t.error(err)
     t.equals(res.statusCode, 200)
-    var payload = JSON.parse(res.payload)
+    const payload = JSON.parse(res.payload)
     t.deepEqual(payload, { hello: 'world' })
   })
 })
@@ -302,7 +302,7 @@ test('Check run all line with OR', t => {
   fastify.inject('/run-all-pipe', (err, res) => {
     t.error(err)
     t.equals(res.statusCode, 200)
-    var payload = JSON.parse(res.payload)
+    const payload = JSON.parse(res.payload)
     t.deepEqual(payload, { hello: 'world' })
   })
 })
@@ -330,7 +330,7 @@ test('Check run all fail line with OR', t => {
   fastify.inject('/run-all-pipe', (err, res) => {
     t.error(err)
     t.equals(res.statusCode, 401)
-    var payload = JSON.parse(res.payload)
+    const payload = JSON.parse(res.payload)
     t.deepEqual(payload, {
       error: 'Unauthorized',
       message: 'quinto',
@@ -359,7 +359,7 @@ test('Ignore last status', t => {
   fastify.inject('/run-all-status', (err, res) => {
     t.error(err)
     t.equals(res.statusCode, 200)
-    var payload = JSON.parse(res.payload)
+    const payload = JSON.parse(res.payload)
     t.deepEqual(payload, { hello: 'world' })
   })
 })
@@ -375,7 +375,7 @@ test('Or Relation run all', t => {
     }
   }, (err, res) => {
     t.error(err)
-    var payload = JSON.parse(res.payload)
+    const payload = JSON.parse(res.payload)
     t.deepEqual(payload, {
       odd: true,
       big: false,
@@ -395,7 +395,7 @@ test('Or Relation run all fail', t => {
     }
   }, (err, res) => {
     t.error(err)
-    var payload = JSON.parse(res.payload)
+    const payload = JSON.parse(res.payload)
     t.deepEqual(payload, {
       error: 'Unauthorized',
       message: 'type of `n` is not `number`',
@@ -415,7 +415,7 @@ test('And Relation run all', t => {
     }
   }, (err, res) => {
     t.error(err)
-    var payload = JSON.parse(res.payload)
+    const payload = JSON.parse(res.payload)
     t.deepEqual(payload, {
       odd: true,
       big: true,
@@ -444,7 +444,7 @@ test('Clean status code settle by user', t => {
   fastify.inject('/run-all-status', (err, res) => {
     t.error(err)
     t.equals(res.statusCode, 200)
-    var payload = JSON.parse(res.payload)
+    const payload = JSON.parse(res.payload)
     t.deepEqual(payload, { hello: 'world' })
   })
 })
