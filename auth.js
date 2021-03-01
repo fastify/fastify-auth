@@ -28,7 +28,8 @@ function auth (functions, opts) {
     throw new Error('The value of options.run must be \'all\'')
   }
 
-  for (let i = 0; i < functions.length; i++) {
+  /* eslint-disable-next-line no-var */
+  for (var i = 0; i < functions.length; i++) {
     functions[i] = functions[i].bind(this)
   }
 
