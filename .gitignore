@@ -121,10 +121,14 @@ dist
 # macOS files
 .DS_Store
 
-# test db
-authdb
-authdb-async
-
 # lock files
 package-lock.json
 yarn.lock
+
+# editor files
+.vscode
+.idea
+
+# test db
+authdb
+authdb-async
