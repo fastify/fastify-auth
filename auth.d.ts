@@ -1,6 +1,7 @@
-import { FastifyPlugin, FastifyRequest, FastifyReply, preHandlerHookHandler } from 'fastify';
+import { FastifyPlugin, FastifyRequest, FastifyReply, preHandlerHookHandler, FastifyInstance } from 'fastify';
 
 export type FastifyAuthFunction = (
+  this: FastifyInstance,
   request: FastifyRequest,
   reply: FastifyReply,
   done: (error?: Error) => void

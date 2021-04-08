@@ -1,4 +1,4 @@
-import fastify, { FastifyRequest, FastifyReply, preHandlerHookHandler } from 'fastify';
+import fastify, { FastifyRequest, FastifyReply, preHandlerHookHandler, FastifyInstance } from 'fastify';
 import fastifyAuth from '../auth'
 import { expectType } from 'tsd';
 
@@ -26,6 +26,11 @@ app.register(fastifyAuth).after((err) => {
 			expectType<FastifyRequest>(request)
 			expectType<FastifyReply>(reply)
 			expectType<Done>(done)
+    },
+  ]);
+  app.auth([
+    function (request, reply, done) {
+      expectType<FastifyInstance>(this)
     },
   ]);
   const auth = app.auth([(request, reply, done) => {}]);
