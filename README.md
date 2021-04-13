@@ -6,8 +6,8 @@
 [![Coverage Status](https://coveralls.io/repos/github/fastify/fastify-auth/badge.svg?branch=master)](https://coveralls.io/github/fastify/fastify-auth?branch=master)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://standardjs.com/)
 
-This module does not provide an authentication strategy, but it provides a very fast utility to handle authentication (also multiple strategies) in your routes, without adding overhead.  
-Check out the complete example [here](https://github.com/fastify/fastify-auth/blob/master/example.js).
+This module does not provide an authentication strategy, but it provides a very fast utility to handle authentication (and multiple strategies) in your routes, without adding overhead.  
+Check out a complete example [here](https://github.com/fastify/fastify-auth/blob/master/example.js).
 
 ## Install
 ```
@@ -15,7 +15,7 @@ npm i fastify-auth
 ```
 
 ## Usage
-As said above, `fastify-auth` does not provide an authentication strategy, so you must provide authentication by yourself, with a decorator or another plugin.
+As said above, `fastify-auth` does not provide an authentication strategy, so you must provide authentication strategies yourself, with a decorator or another plugin.
 
 In the following example, you will find a very simple implementation that should help you understand how to use this module:
 ```js
@@ -45,7 +45,7 @@ fastify
   })
 ```
 
-The default relationship of these customized authentication is `or`, while we could also use `and`:
+The default relationship of these customized authentication strategies is `or`, while we could also use `and`:
 ```js
 fastify
   .decorate('verifyAdmin', function (request, reply, done) {
@@ -74,7 +74,7 @@ fastify
     })
   })
 ```
-_For more examples, please check `example-composited.js`_
+_For more examples, please check [`example-composited.js`](example-composited.js)_
 
 This plugin support `callback` and `Promise` returned by the functions. Note that an `async` function does not have to use the `done` parameter:
 ```js
@@ -106,7 +106,7 @@ fastify
 ```
 
 
-Keep in mind that route definition should either be done as [a plugin](https://github.com/fastify/fastify/blob/master/docs/Plugins.md) or within `.after()` callback.
+Keep in mind that route definition should either be done as [a plugin](https://github.com/fastify/fastify/blob/master/docs/Plugins.md) or within an `.after()` callback.
 For a complete example implementation, see [example.js](example.js).
 
 `fastify-auth` will run all your authentication methods and your request will continue if at least one succeeds, otherwise it will return an error to the client.
@@ -129,7 +129,7 @@ This example will show all the console logs and will reply always with `401: you
 The `run` parameter is useful if you are adding to the request business data read from auth-tokens.
 
 
-You can use this plugin on route level, as in the above example or on hook level, by using the `preHandler` hook:
+You can use this plugin on route level as in the above example or on hook level by using the `preHandler` hook:
 ```js
 fastify.addHook('preHandler', fastify.auth([
   fastify.verifyJWTandLevel,
