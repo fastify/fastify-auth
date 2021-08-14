@@ -76,7 +76,7 @@ fastify
 ```
 _For more examples, please check [`example-composited.js`](example-composited.js)_
 
-This plugin support `callback` and `Promise` returned by the functions. Note that an `async` function does not have to use the `done` parameter:
+This plugin support `callback` and `Promise` returned by the functions. Note that an `async` function **does not have** to call the `done` parameter, otherwise the route handler to which the auth methods are linked to might be called multiple times:
 ```js
 fastify
   .decorate('asyncVerifyJWTandLevel', async function (request, reply) {
