@@ -27,6 +27,94 @@ test('Clean status code through auth pipeline', t => {
   })
 })
 
+test('Options: non-array functions input', t => {
+  t.plan(3)
+
+  const app = Fastify()
+  app.register(fastifyAuth).after(() => {
+    try {
+      app.addHook('preHandler', app.auth('bogus'))
+      app.get('/', (req, res) => res.send(42))
+    } catch (error) {
+      t.ok(error)
+    }
+  })
+
+  app.inject({
+    method: 'GET',
+    url: '/'
+  }, (err, res) => {
+    t.error(err)
+    t.equal(res.statusCode, 404)
+  })
+})
+
+test('Options: empty array functions input', t => {
+  t.plan(3)
+
+  const app = Fastify()
+  app.register(fastifyAuth).after(() => {
+    try {
+      app.addHook('preHandler', app.auth([]))
+      app.get('/', (req, res) => res.send(42))
+    } catch (error) {
+      t.ok(error)
+    }
+  })
+
+  app.inject({
+    method: 'GET',
+    url: '/'
+  }, (err, res) => {
+    t.error(err)
+    t.equal(res.statusCode, 404)
+  })
+})
+
+test('Options: faulty relation', t => {
+  t.plan(3)
+
+  const app = Fastify()
+  app.register(fastifyAuth).after(() => {
+    try {
+      app.addHook('preHandler', app.auth([successWithCode('one', 201)], { relation: 'foo' }))
+      app.get('/', (req, res) => res.send(42))
+    } catch (error) {
+      t.ok(error)
+    }
+  })
+
+  app.inject({
+    method: 'GET',
+    url: '/'
+  }, (err, res) => {
+    t.error(err)
+    t.equal(res.statusCode, 404)
+  })
+})
+
+test('Options: faulty run', t => {
+  t.plan(3)
+
+  const app = Fastify()
+  app.register(fastifyAuth).after(() => {
+    try {
+      app.addHook('preHandler', app.auth([successWithCode('one', 201)], { run: 'foo' }))
+      app.get('/', (req, res) => res.send(42))
+    } catch (error) {
+      t.ok(error)
+    }
+  })
+
+  app.inject({
+    method: 'GET',
+    url: '/'
+  }, (err, res) => {
+    t.error(err)
+    t.equal(res.statusCode, 404)
+  })
+})
+
 test('Avoid status code overwriting', t => {
   t.plan(3)
 
