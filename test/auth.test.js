@@ -28,7 +28,7 @@ test('Clean status code through auth pipeline', t => {
 })
 
 test('Options: non-array functions input', t => {
-  t.plan(3)
+  t.plan(4)
 
   const app = Fastify()
   app.register(fastifyAuth).after(() => {
@@ -37,6 +37,7 @@ test('Options: non-array functions input', t => {
       app.get('/', (req, res) => res.send(42))
     } catch (error) {
       t.ok(error)
+      t.equal(error.message, 'You must give an array of functions to the auth function')
     }
   })
 
@@ -50,7 +51,7 @@ test('Options: non-array functions input', t => {
 })
 
 test('Options: empty array functions input', t => {
-  t.plan(3)
+  t.plan(4)
 
   const app = Fastify()
   app.register(fastifyAuth).after(() => {
@@ -59,6 +60,7 @@ test('Options: empty array functions input', t => {
       app.get('/', (req, res) => res.send(42))
     } catch (error) {
       t.ok(error)
+      t.equal(error.message, 'Missing auth functions')
     }
   })
 
@@ -72,7 +74,7 @@ test('Options: empty array functions input', t => {
 })
 
 test('Options: faulty relation', t => {
-  t.plan(3)
+  t.plan(4)
 
   const app = Fastify()
   app.register(fastifyAuth).after(() => {
@@ -81,6 +83,7 @@ test('Options: faulty relation', t => {
       app.get('/', (req, res) => res.send(42))
     } catch (error) {
       t.ok(error)
+      t.equal(error.message, 'The value of options.relation should be one of [\'or\', \'and\']')
     }
   })
 
@@ -94,7 +97,7 @@ test('Options: faulty relation', t => {
 })
 
 test('Options: faulty run', t => {
-  t.plan(3)
+  t.plan(4)
 
   const app = Fastify()
   app.register(fastifyAuth).after(() => {
@@ -103,6 +106,7 @@ test('Options: faulty run', t => {
       app.get('/', (req, res) => res.send(42))
     } catch (error) {
       t.ok(error)
+      t.equal(error.message, 'The value of options.run must be \'all\'')
     }
   })
 
