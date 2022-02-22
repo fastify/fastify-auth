@@ -73,7 +73,7 @@ test('Register user', t => {
   })
 })
 
-test('Auth succesful', t => {
+test('Auth successful', t => {
   t.plan(2)
 
   fastify.inject({
@@ -89,7 +89,7 @@ test('Auth succesful', t => {
   })
 })
 
-test('Auth not succesful', t => {
+test('Auth not successful', t => {
   t.plan(2)
 
   fastify.inject({
@@ -109,7 +109,7 @@ test('Auth not succesful', t => {
   })
 })
 
-test('Auth succesful (multiple)', t => {
+test('Auth successful (multiple)', t => {
   t.plan(2)
 
   fastify.inject({
@@ -126,7 +126,7 @@ test('Auth succesful (multiple)', t => {
   })
 })
 
-test('Auth not succesful (multiple)', t => {
+test('Auth not successful (multiple)', t => {
   t.plan(2)
 
   fastify.inject({
