@@ -147,6 +147,26 @@ test('Auth not successful (multiple)', t => {
   })
 })
 
+test('Failure with missing user', t => {
+  t.plan(2)
+
+  fastify.inject({
+    method: 'POST',
+    url: '/auth-multiple',
+    payload: {
+      password: 'wrong!'
+    }
+  }, (err, res) => {
+    t.error(err)
+    const payload = JSON.parse(res.payload)
+    t.same(payload, {
+      error: 'Unauthorized',
+      message: 'Missing user in request body',
+      statusCode: 401
+    })
+  })
+})
+
 test('Failure with explicit reply', t => {
   t.plan(3)
 
