@@ -1,7 +1,7 @@
-# fastify-auth
+# @fastify/auth
 
 ![CI](https://github.com/fastify/fastify-auth/workflows/CI/badge.svg)
-[![NPM version](https://img.shields.io/npm/v/fastify-auth.svg?style=flat)](https://www.npmjs.com/package/fastify-auth)
+[![NPM version](https://img.shields.io/npm/v/@fastify/auth.svg?style=flat)](https://www.npmjs.com/package/@fastify/auth)
 [![Known Vulnerabilities](https://snyk.io/test/github/fastify/fastify-auth/badge.svg)](https://snyk.io/test/github/fastify/fastify-auth)
 [![Coverage Status](https://coveralls.io/repos/github/fastify/fastify-auth/badge.svg?branch=master)](https://coveralls.io/github/fastify/fastify-auth?branch=master)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://standardjs.com/)
@@ -11,11 +11,11 @@ Check out a complete example [here](https://github.com/fastify/fastify-auth/blob
 
 ## Install
 ```
-npm i fastify-auth
+npm i @fastify/auth
 ```
 
 ## Usage
-As said above, `fastify-auth` does not provide an authentication strategy, so you must provide authentication strategies yourself, with a decorator or another plugin.
+As said above, `@fastify/auth` does not provide an authentication strategy, so you must provide authentication strategies yourself, with a decorator or another plugin.
 
 In the following example, you will find a very simple implementation that should help you understand how to use this module:
 ```js
@@ -28,7 +28,7 @@ fastify
     // your validation logic
     done() // pass an error if the authentication fails
   })
-  .register(require('fastify-auth'))
+  .register(require('@fastify/auth'))
   .after(() => {
     fastify.route({
       method: 'POST',
@@ -56,7 +56,7 @@ fastify
     // your validation logic
     done() // pass an error if the authentication fails
   })
-  .register(require('fastify-auth'))
+  .register(require('@fastify/auth'))
   .after(() => {
     fastify.route({
       method: 'POST',
@@ -88,7 +88,7 @@ fastify
     // return a promise that throws an error if the authentication fails
     return myPromiseValidation()
   })
-  .register(require('fastify-auth'))
+  .register(require('@fastify/auth'))
   .after(() => {
     fastify.route({
       method: 'POST',
@@ -109,8 +109,8 @@ fastify
 Keep in mind that route definition should either be done as [a plugin](https://github.com/fastify/fastify/blob/master/docs/Plugins.md) or within an `.after()` callback.
 For a complete example implementation, see [example.js](example.js).
 
-`fastify-auth` will run all your authentication methods and your request will continue if at least one succeeds, otherwise it will return an error to the client.
-Any successful authentication will automatically stop `fastify-auth` from trying the rest, unless you provide the `run: 'all'` parameter:
+`@fastify/auth` will run all your authentication methods and your request will continue if at least one succeeds, otherwise it will return an error to the client.
+Any successful authentication will automatically stop `@fastify/auth` from trying the rest, unless you provide the `run: 'all'` parameter:
 ```js
 fastify.route({
   method: 'GET',
