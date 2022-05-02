@@ -31,7 +31,7 @@
   "license": "MIT",
   "devDependencies": {
     "fastify": "^3.0.0",
-    "fastify-jwt": "^3.0.0",
+    "fastify-jwt": "^4.2.0",
     "fastify-leveldb": "^3.0.0",
     "pre-commit": "^1.2.2",
     "rimraf": "^3.0.2",
