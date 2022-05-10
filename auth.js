@@ -73,10 +73,14 @@ function auth (functions, opts) {
         return
       }
 
-      const maybePromise = func(that.request, that.reply, that.onAuth)
+      try {
+        const maybePromise = func(that.request, that.reply, that.onAuth)
 
-      if (maybePromise && typeof maybePromise.then === 'function') {
-        maybePromise.then(results => that.onAuth(null, results), that.onAuth)
+        if (maybePromise && typeof maybePromise.then === 'function') {
+          maybePromise.then(results => that.onAuth(null, results), that.onAuth)
+        }
+      } catch (err) {
+        this.onAuth(err)
       }
     }
 
@@ -118,4 +122,4 @@ function auth (functions, opts) {
   }
 }
 
-module.exports = fp(checkAuth, '3.x')
+module.exports = fp(checkAuth, '4.x')

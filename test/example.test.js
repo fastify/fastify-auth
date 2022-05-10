@@ -102,8 +102,9 @@ test('Auth not successful', t => {
     t.error(err)
     const payload = JSON.parse(res.payload)
     t.same(payload, {
+      code: 'FAST_JWT_MALFORMED',
       error: 'Unauthorized',
-      message: 'Token not valid',
+      message: 'The token is malformed.',
       statusCode: 401
     })
   })
