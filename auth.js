@@ -118,4 +118,4 @@ function auth (functions, opts) {
   }
 }
 
-module.exports = fp(checkAuth, '3.x')
+module.exports = fp(checkAuth, '4.x')
