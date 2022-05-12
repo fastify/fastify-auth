@@ -1,4 +1,4 @@
-import { FastifyPlugin, FastifyRequest, FastifyReply, preHandlerHookHandler, FastifyInstance } from 'fastify';
+import { FastifyPluginCallback, FastifyRequest, FastifyReply, preHandlerHookHandler, FastifyInstance } from 'fastify';
 
 export type FastifyAuthFunction = (
   this: FastifyInstance,
@@ -19,5 +19,5 @@ declare module 'fastify' {
   }
 }
 
-declare const fastifyAuth: FastifyPlugin;
+declare const fastifyAuth: FastifyPluginCallback;
 export default fastifyAuth;
