@@ -5,10 +5,10 @@ const Fastify = require('fastify')
 function build (opts) {
   const fastify = Fastify(opts)
 
-  fastify.register(require('fastify-jwt'), { secret: 'supersecret' })
-  fastify.register(require('fastify-leveldb'), { name: 'authdb-async' })
+  fastify.register(require('@fastify/jwt'), { secret: 'supersecret' })
+  fastify.register(require('@fastify/leveldb'), { name: 'authdb-async' })
   fastify.register(require('./auth'))
-  fastify.after(routes)
+  fastify.register(routes)
 
   fastify.decorate('verifyJWTandLevel', verifyJWTandLevel)
   fastify.decorate('verifyUserAndPassword', verifyUserAndPassword)
@@ -65,7 +65,7 @@ function build (opts) {
     }
   }
 
-  function routes () {
+  async function routes (fastify) {
     fastify.route({
       method: 'POST',
       url: '/register',
@@ -138,9 +138,8 @@ if (require.main === module) {
       level: 'info'
     }
   })
-  fastify.listen(3000, err => {
+  fastify.listen({ port: 3000, host: '0.0.0.0' }, err => {
     if (err) throw err
-    console.log(`Server listenting at http://localhost:${fastify.server.address().port}`)
   })
 }
 

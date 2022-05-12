@@ -24,8 +24,8 @@ const Fastify = require('fastify')
 function build (opts) {
   const fastify = Fastify(opts)
 
-  fastify.register(require('fastify-jwt'), { secret: 'supersecret' })
-  fastify.register(require('fastify-leveldb'), { name: 'authdb' })
+  fastify.register(require('@fastify/jwt'), { secret: 'supersecret' })
+  fastify.register(require('@fastify/leveldb'), { name: 'authdb' })
   fastify.register(require('./auth')) // just 'fastify-auth' IRL
   fastify.after(routes)
 
@@ -170,9 +170,8 @@ if (require.main === module) {
       level: 'info'
     }
   })
-  fastify.listen(3000, err => {
+  fastify.listen({ port: 3000 }, err => {
     if (err) throw err
-    console.log(`Server listening at http://localhost:${fastify.server.address().port}`)
   })
 }
 

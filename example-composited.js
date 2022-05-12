@@ -136,9 +136,8 @@ if (require.main === module) {
       level: 'info'
     }
   })
-  fastify.listen(3000, '0.0.0.0', err => {
+  fastify.listen({ port: 3000, host: '0.0.0.0' }, err => {
     if (err) throw err
-    console.log(`Server listenting at http://${JSON.stringify(fastify.server.address())}`)
   })
 }
 
