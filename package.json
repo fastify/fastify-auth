@@ -10,7 +10,7 @@
   "types": "auth.d.ts",
   "scripts": {
     "clean": "rimraf authdb",
-    "standard": "standard",
+    "lint": "standard",
     "test": "npm run test:unit && npm run test:typescript",
     "test:ci": "standard && tap -J ./test/*.test.js --coverage-report=lcovonly && npm run test:typescript",
     "test:typescript": "tsd",
