@@ -122,4 +122,7 @@ function auth (functions, opts) {
   }
 }
 
-module.exports = fp(checkAuth, '4.x')
+module.exports = fp(checkAuth, {
+  fastify: '4.x',
+  name: '@fastify/auth'
+})
