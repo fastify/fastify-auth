@@ -32,7 +32,7 @@
   "devDependencies": {
     "@fastify/jwt": "^6.0.0",
     "@fastify/leveldb": "^5.0.1",
-    "@types/node": "^17.0.32",
+    "@types/node": "^18.0.0",
     "fastify": "^4.0.0-rc.3",
     "pre-commit": "^1.2.2",
     "rimraf": "^3.0.2",
