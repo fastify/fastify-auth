@@ -1,4 +1,5 @@
-import { FastifyPluginCallback, FastifyRequest, FastifyReply, preHandlerHookHandler, FastifyInstance } from 'fastify';
+import { ContextConfigDefault, FastifyInstance, FastifyPluginCallback, FastifyReply, FastifyRequest, FastifySchema, preHandlerHookHandler } from 'fastify';
+import { RouteGenericInterface } from 'fastify/types/route';
 
 export type FastifyAuthFunction = (
   this: FastifyInstance,
@@ -8,14 +9,14 @@ export type FastifyAuthFunction = (
 ) => void;
 
 declare module 'fastify' {
-  interface FastifyInstance {
+  interface FastifyInstance<RawServer, RawRequest, RawReply, Logger, TypeProvider> {
     auth(
       functions: FastifyAuthFunction[],
       options?: {
         relation?: 'and' | 'or',
         run?: 'all'
       }
-    ): preHandlerHookHandler;
+    ): preHandlerHookHandler<RawServer, RawRequest, RawReply, RouteGenericInterface, ContextConfigDefault, FastifySchema, TypeProvider>;
   }
 }
 
