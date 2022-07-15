@@ -3,7 +3,7 @@
 const t = require('tap')
 const test = t.test
 const rimraf = require('rimraf')
-const build = require('../example-async')
+const build = require('./example-async')
 
 let fastify = null
 let token = null
