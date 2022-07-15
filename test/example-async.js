@@ -1,23 +1,4 @@
 'use strict'
-/*
-Register a user:
-
-    curl -i 'http://127.0.0.1:3000/register' -H 'content-type: application/json' --data '{"user": "myuser","password":"mypass"}'
-Will return:
-    {"token":"YOUR_JWT_TOKEN"}
-
-The application then:
-1. generates a JWT token (from 'supersecret') and adds to the response headers
-1. inserts user in the leveldb
-
-Check it's all working by using one or the other auth mechanisms:
-1. Auth using username and password (you can also use JWT on this endpoint)
-    curl 'http://127.0.0.1:3000/auth-multiple' -H 'content-type: application/json' --data '{"user": "myuser","password":"mypass"}'
-    {"hello":"world"}
-
-1. Auth using JWT token
-    curl -i 'http://127.0.0.1:3000/auth' -H 'content-type: application/json' -H "auth: YOUR_JWT_TOKEN"
- */
 
 const Fastify = require('fastify')
 
@@ -25,58 +6,46 @@ function build (opts) {
   const fastify = Fastify(opts)
 
   fastify.register(require('@fastify/jwt'), { secret: 'supersecret' })
-  fastify.register(require('@fastify/leveldb'), { name: 'authdb' })
-  fastify.register(require('./auth')) // just 'fastify-auth' IRL
-  fastify.after(routes)
+  fastify.register(require('@fastify/leveldb'), { name: 'authdb-async' })
+  fastify.register(require('../auth'))
+  fastify.register(routes)
 
-  fastify.decorate('verifyJWTandLevelDB', verifyJWTandLevelDB)
+  fastify.decorate('verifyJWTandLevel', verifyJWTandLevel)
   fastify.decorate('verifyUserAndPassword', verifyUserAndPassword)
 
-  function verifyJWTandLevelDB (request, reply, done) {
+  function verifyJWTandLevel (request, reply) {
     const jwt = this.jwt
-    const level = this.level.authdb
+    const level = this.level['authdb-async']
 
     if (request.body && request.body.failureWithReply) {
       reply.code(401).send({ error: 'Unauthorized' })
-      return done(new Error())
+      return Promise.reject(new Error())
     }
 
     if (!request.raw.headers.auth) {
-      return done(new Error('Missing token header'))
+      return Promise.reject(new Error('Missing token header'))
     }
 
-    jwt.verify(request.raw.headers.auth, onVerify)
-
-    function onVerify (err, decoded) {
-      if (err || !decoded.user || !decoded.password) {
-        return done(new Error('Token not valid'))
-      }
-
-      level.get(decoded.user, onUser)
-
-      function onUser (err, password) {
-        if (err) {
-          if (err.notFound) {
-            return done(new Error('Token not valid'))
+    return new Promise(function (resolve, reject) {
+      jwt.verify(request.raw.headers.auth, function (err, decoded) {
+        if (err) { return reject(err) };
+        resolve(decoded)
+      })
+    }).then(function (decoded) {
+      return level.get(decoded.user)
+        .then(function (password) {
+          if (!password || password !== decoded.password) {
+            throw new Error('Token not valid')
           }
-          return done(err)
-        }
-
-        if (!password || password !== decoded.password) {
-          return done(new Error('Token not valid'))
-        }
-
-        done()
-      }
-    }
+        })
+    }).catch(function (error) {
+      request.log.error(error)
+      throw new Error('Token not valid')
+    })
   }
 
   function verifyUserAndPassword (request, reply, done) {
-    const level = this.level.authdb
-
-    if (!request.body || !request.body.user) {
-      return done(new Error('Missing user in request body'))
-    }
+    const level = this.level['authdb-async']
 
     level.get(request.body.user, onUser)
 
@@ -96,7 +65,7 @@ function build (opts) {
     }
   }
 
-  function routes () {
+  async function routes (fastify) {
     fastify.route({
       method: 'POST',
       url: '/register',
@@ -112,7 +81,7 @@ function build (opts) {
       },
       handler: (req, reply) => {
         req.log.info('Creating new user')
-        fastify.level.authdb.put(req.body.user, req.body.password, onPut)
+        fastify.level['authdb-async'].put(req.body.user, req.body.password, onPut)
 
         function onPut (err) {
           if (err) return reply.send(err)
@@ -139,7 +108,7 @@ function build (opts) {
     fastify.route({
       method: 'GET',
       url: '/auth',
-      preHandler: fastify.auth([fastify.verifyJWTandLevelDB]),
+      preHandler: fastify.auth([fastify.verifyJWTandLevel]),
       handler: (req, reply) => {
         req.log.info('Auth route')
         reply.send({ hello: 'world' })
@@ -150,8 +119,7 @@ function build (opts) {
       method: 'POST',
       url: '/auth-multiple',
       preHandler: fastify.auth([
-        // Only one of these has to pass
-        fastify.verifyJWTandLevelDB,
+        fastify.verifyJWTandLevel,
         fastify.verifyUserAndPassword
       ]),
       handler: (req, reply) => {
@@ -170,7 +138,7 @@ if (require.main === module) {
       level: 'info'
     }
   })
-  fastify.listen({ port: 3000 }, err => {
+  fastify.listen({ port: 3000, host: '0.0.0.0' }, err => {
     if (err) throw err
   })
 }

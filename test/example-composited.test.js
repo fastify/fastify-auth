@@ -2,7 +2,7 @@
 
 const t = require('tap')
 const test = t.test
-const build = require('../example-composited')
+const build = require('./example-composited')
 
 let fastify = null
 
