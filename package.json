@@ -1,6 +1,6 @@
 {
   "name": "@fastify/auth",
-  "version": "3.0.2",
+  "version": "4.0.0",
   "description": "Run multiple auth functions in Fastify",
   "repository": {
     "type": "git",
@@ -30,16 +30,16 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "@fastify/jwt": "^6.0.0",
+    "@fastify/jwt": "^6.3.2",
     "@fastify/leveldb": "^5.0.1",
     "@fastify/pre-commit": "^2.0.2",
-    "@fastify/type-provider-json-schema-to-ts": "^2.0.0",
-    "@fastify/type-provider-typebox": "^2.0.1",
-    "@types/node": "^18.0.0",
-    "fastify": "^4.0.0-rc.3",
+    "@fastify/type-provider-json-schema-to-ts": "^2.1.1",
+    "@fastify/type-provider-typebox": "^2.3.0",
+    "@types/node": "^18.7.14",
+    "fastify": "^4.5.3",
     "rimraf": "^3.0.2",
     "standard": "^17.0.0",
-    "tap": "^16.0.0",
+    "tap": "^16.3.0",
     "tsd": "^0.23.0"
   },
   "dependencies": {
