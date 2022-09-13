@@ -73,7 +73,7 @@ fastify
   })
 ```
 
-If you want to change the default relation, you can use the `defaultRelation` option while registering the plugin:
+You can use the `defaultRelation` option while registering the plugin, to change the default `relation`:
 ```js
 fastify.register(require('@fastify/auth'), { defaultRelation: 'and'} )
 ```
