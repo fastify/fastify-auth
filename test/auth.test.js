@@ -4,6 +4,17 @@ const { test } = require('tap')
 const Fastify = require('fastify')
 const fastifyAuth = require('../auth')
 
+test('registering plugin with invalid diffult relation', async (t) => {
+  t.plan(1)
+  const fastify = Fastify()
+
+  try {
+    await fastify.register(fastifyAuth, { defaultRelation: 'auth' })
+  } catch (err) {
+    t.equal(err.message, 'The value of default relation should be one of [\'or\', \'and\']')
+  }
+})
+
 test('Clean status code through auth pipeline', t => {
   t.plan(3)
 
@@ -23,6 +34,51 @@ test('Clean status code through auth pipeline', t => {
   }, (err, res) => {
     t.error(err)
     t.equal(res.payload, '42')
+    t.equal(res.statusCode, 200)
+  })
+})
+
+test('defaultRelation: used when relation not specified', t => {
+  t.plan(4)
+
+  const app = Fastify()
+  app.register(fastifyAuth, { defaultRelation: 'or' })
+    .after(() => {
+      app.route({
+        method: 'GET',
+        url: '/welcome',
+        preHandler: app.auth([successWithCode('one', 200), failWithCode('two', 502)]),
+        handler: (req, reply) => {
+          reply.send({ hello: 'welcome' })
+        }
+      })
+
+      app.route({
+        method: 'GET',
+        url: '/bye',
+        preHandler: app.auth([failWithCode('one', 503), successWithCode('two', 200)], { relation: 'or' }),
+        handler: (req, reply) => {
+          reply.send({ hello: 'bye' })
+        }
+      })
+    })
+
+  app.inject({
+    method: 'GET',
+    url: '/welcome'
+  }, (err, res) => {
+    t.error(err)
+    t.equal(res.statusCode, 502)
+  })
+
+  app.inject({
+    method: 'GET',
+    url: '/bye',
+    query: {
+      name: 'two'
+    }
+  }, (err, res) => {
+    t.error(err)
     t.equal(res.statusCode, 200)
   })
 })
