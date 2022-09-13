@@ -10,6 +10,7 @@ test('registering plugin with invalid default relation', async (t) => {
 
   try {
     await fastify.register(fastifyAuth, { defaultRelation: 'auth' })
+    t.fail('should not continue')
   } catch (err) {
     t.equal(err.message, 'The value of default relation should be one of [\'or\', \'and\']')
   }
