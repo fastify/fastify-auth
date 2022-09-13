@@ -4,7 +4,7 @@ const { test } = require('tap')
 const Fastify = require('fastify')
 const fastifyAuth = require('../auth')
 
-test('registering plugin with invalid diffult relation', async (t) => {
+test('registering plugin with invalid default relation', async (t) => {
   t.plan(1)
   const fastify = Fastify()
 
