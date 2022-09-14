@@ -39,49 +39,45 @@ test('Clean status code through auth pipeline', t => {
   })
 })
 
-test('defaultRelation: used when relation not specified', t => {
-  t.plan(4)
+test('defaultRelation: used when relation not specified', async (t) => {
+  t.plan(2)
 
   const app = Fastify()
-  app.register(fastifyAuth, { defaultRelation: 'or' })
-    .after(() => {
-      app.route({
-        method: 'GET',
-        url: '/welcome',
-        preHandler: app.auth([successWithCode('one', 200), failWithCode('two', 502)]),
-        handler: (req, reply) => {
-          reply.send({ hello: 'welcome' })
-        }
-      })
+  await app.register(fastifyAuth, { defaultRelation: 'or' })
 
-      app.route({
-        method: 'GET',
-        url: '/bye',
-        preHandler: app.auth([failWithCode('one', 503), successWithCode('two', 200)], { relation: 'or' }),
-        handler: (req, reply) => {
-          reply.send({ hello: 'bye' })
-        }
-      })
-    })
-
-  app.inject({
+  app.route({
     method: 'GET',
-    url: '/welcome'
-  }, (err, res) => {
-    t.error(err)
-    t.equal(res.statusCode, 502)
+    url: '/welcome',
+    preHandler: app.auth([successWithCode('one', 200), failWithCode('two', 502)]),
+    handler: async (req, reply) => {
+      console.log('fawzihandler1')
+      await reply.send({ hello: 'welcome' })
+    }
   })
 
-  app.inject({
+  app.route({
+    method: 'GET',
+    url: '/bye',
+    preHandler: app.auth([failWithCode('one', 503), successWithCode('two', 200)], { relation: 'or' }),
+    handler: (req, reply) => {
+      reply.send({ hello: 'bye' })
+    }
+  })
+
+  const response = await app.inject({
+    method: 'GET',
+    url: '/welcome'
+  })
+  t.equal(response.statusCode, 502)
+
+  const res = await app.inject({
     method: 'GET',
     url: '/bye',
     query: {
       name: 'two'
     }
-  }, (err, res) => {
-    t.error(err)
-    t.equal(res.statusCode, 200)
   })
+  t.equal(res.statusCode, 200)
 })
 
 test('Options: non-array functions input', t => {
