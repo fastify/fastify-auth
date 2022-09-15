@@ -7,13 +7,7 @@ const fastifyAuth = require('../auth')
 test('registering plugin with invalid default relation', async (t) => {
   t.plan(1)
   const fastify = Fastify()
-
-  try {
-    await fastify.register(fastifyAuth, { defaultRelation: 'auth' })
-    t.rejects('should not continue')
-  } catch (err) {
-    t.equal(err.message, 'The value of default relation should be one of [\'or\', \'and\']')
-  }
+  t.rejects(fastify.register(fastifyAuth, { defaultRelation: 'auth' }), 'The value of default relation should be one of [\'or\', \'and\']')
 })
 
 test('Clean status code through auth pipeline', t => {
