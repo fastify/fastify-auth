@@ -8,6 +8,18 @@ export type FastifyAuthFunction = (
   done: (error?: Error) => void
 ) => void;
 
+/**
+ * @link [`fastify-auth` options documentation](https://github.com/fastify/fastify-auth#options)
+ */
+export interface FastifyAuthPluginOptions {
+  /**
+   * The default relation between the functions. It can be either `or` or `and`.
+   *
+   * - Default value: `or`
+   */
+   defaultRelation?: 'and' | 'or',
+}
+
 declare module 'fastify' {
   interface FastifyInstance<RawServer, RawRequest, RawReply, Logger, TypeProvider> {
     auth(
@@ -20,5 +32,5 @@ declare module 'fastify' {
   }
 }
 
-declare const fastifyAuth: FastifyPluginCallback;
+declare const fastifyAuth: FastifyPluginCallback<FastifyAuthPluginOptions>
 export default fastifyAuth;

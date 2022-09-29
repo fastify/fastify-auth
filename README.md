@@ -72,6 +72,12 @@ fastify
     })
   })
 ```
+
+You can use the `defaultRelation` option while registering the plugin, to change the default `relation`:
+```js
+fastify.register(require('@fastify/auth'), { defaultRelation: 'and'} )
+```
+
 _For more examples, please check [`example-composited.js`](test/example-composited.js)_
 
 This plugin support `callback` and `Promise` returned by the functions. Note that an `async` function **does not have** to call the `done` parameter, otherwise the route handler to which the auth methods are linked to [might be called multiple times](https://www.fastify.io/docs/latest/Hooks/#respond-to-a-request-from-a-hook):
@@ -145,6 +151,20 @@ fastify.route({
 ```
 
 The difference between the two approaches is that if you use the route level `preHandler` function the authentication will run just for the selected route. Whereas if you use the `preHandler` hook the authentication will run for all the routes declared inside the current plugin (and its descendants).
+
+## API
+
+### Options
+
+*@fastify/auth* accepts the options object:
+
+```js
+{
+  defaultRelation: 'and'
+}
+```
+
++ `defaultRelation` (Default: `or`): The default relation between the functions. It can be either `or` or `and`.
 
 ## Acknowledgements
 
