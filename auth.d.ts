@@ -1,29 +1,9 @@
-import { ContextConfigDefault, FastifyInstance, FastifyPluginCallback, FastifyReply, FastifyRequest, FastifySchema, preHandlerHookHandler } from 'fastify';
-import { RouteGenericInterface } from 'fastify/types/route';
-
-export type FastifyAuthFunction = (
-  this: FastifyInstance,
-  request: FastifyRequest,
-  reply: FastifyReply,
-  done: (error?: Error) => void
-) => void;
-
-/**
- * @link [`fastify-auth` options documentation](https://github.com/fastify/fastify-auth#options)
- */
-export interface FastifyAuthPluginOptions {
-  /**
-   * The default relation between the functions. It can be either `or` or `and`.
-   *
-   * - Default value: `or`
-   */
-   defaultRelation?: 'and' | 'or',
-}
+import { ContextConfigDefault, RouteGenericInterface, FastifyInstance, FastifyPluginCallback, FastifyReply, FastifyRequest, FastifySchema, preHandlerHookHandler } from 'fastify';
 
 declare module 'fastify' {
   interface FastifyInstance<RawServer, RawRequest, RawReply, Logger, TypeProvider> {
     auth(
-      functions: FastifyAuthFunction[],
+      functions: fastifyAuth.FastifyAuthFunction[],
       options?: {
         relation?: 'and' | 'or',
         run?: 'all'
@@ -32,5 +12,31 @@ declare module 'fastify' {
   }
 }
 
-declare const fastifyAuth: FastifyPluginCallback<FastifyAuthPluginOptions>
-export default fastifyAuth;
+type FastifyAuth = FastifyPluginCallback<fastifyAuth.FastifyAuthPluginOptions>
+
+declare namespace fastifyAuth {
+  export type FastifyAuthFunction = (
+    this: FastifyInstance,
+    request: FastifyRequest,
+    reply: FastifyReply,
+    done: (error?: Error) => void
+  ) => void;
+  
+  /**
+   * @link [`fastify-auth` options documentation](https://github.com/fastify/fastify-auth#options)
+   */
+  export interface FastifyAuthPluginOptions {
+    /**
+     * The default relation between the functions. It can be either `or` or `and`.
+     *
+     * - Default value: `or`
+     */
+     defaultRelation?: 'and' | 'or',
+  }
+  
+  export const fastifyAuth: FastifyAuth
+  export { fastifyAuth as default }
+}
+
+declare function fastifyAuth(...params: Parameters<FastifyAuth>): ReturnType<FastifyAuth>
+export = fastifyAuth

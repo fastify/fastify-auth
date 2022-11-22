@@ -5,7 +5,7 @@ const reusify = require('reusify')
 
 const DEFAULT_RELATION = 'or'
 
-function checkAuth (fastify, opts, next) {
+function fastifyAuth (fastify, opts, next) {
   if (opts.defaultRelation && opts.defaultRelation !== 'or' && opts.defaultRelation !== 'and') {
     return next(new Error("The value of default relation should be one of ['or', 'and']"))
   } else if (!opts.defaultRelation) {
@@ -132,7 +132,9 @@ function auth (pluginOptions) {
   }
 }
 
-module.exports = fp(checkAuth, {
+module.exports = fp(fastifyAuth, {
   fastify: '4.x',
   name: '@fastify/auth'
 })
+module.exports.default = fastifyAuth
+module.exports.fastifyAuth = fastifyAuth
