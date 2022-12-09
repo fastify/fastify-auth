@@ -152,6 +152,18 @@ fastify.route({
 
 The difference between the two approaches is that if you use the route level `preHandler` function the authentication will run just for the selected route. Whereas if you use the `preHandler` hook the authentication will run for all the routes declared inside the current plugin (and its descendants).
 
+## Security Considerations
+
+### `onRequest` vs. `preHandler` hook
+
+The main difference between the `onRequest` and `preHandler` stages of the [Fastify Lifecycle](https://www.fastify.io/docs/latest/Reference/Lifecycle/) is that the body payload is not parsed in the  `onRequest` stage. Parsing the body can be a potential security risk, as it can be used for denial of service (DoS) attacks. Therefore, it is recommended to avoid parsing the body for unauthorized access.
+
+Using the `@fastify/auth` plugin in the `preHandler` hook can result in unnecessary memory allocation if a malicious user sends a large payload in the request body and the request is unauthorized. In this case, Fastify will parse the body, even though the request is not authorized, leading to unnecessary memory allocation. To avoid this, it is recommended to use the `onRequest` hook for authentication, if the authentication method does not require the request body, such as `@fastify/jwt`, which expects the authentication in the request header.
+
+For authentication methods that do require the request body, such as sending a token in the body, you must use the `preHandler` hook.
+
+In mixed cases you must use the `preHandler` hook.
+
 ## API
 
 ### Options
