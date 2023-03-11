@@ -2,25 +2,20 @@
 
 const t = require('tap')
 const test = t.test
-const rimraf = require('rimraf')
+const { rimrafSync } = require('rimraf')
 const build = require('./example')
 
 let fastify = null
 let token = null
 
-t.teardown(() => {
-  fastify.close()
-  rimraf('./authdb', err => {
-    if (err) throw err
-  })
+t.before(() => {
+  rimrafSync('./authdb')
+  fastify = build()
 })
 
-test('boot server', t => {
-  t.plan(1)
-  rimraf('./authdb', err => {
-    fastify = build()
-    t.error(err)
-  })
+t.teardown(() => {
+  fastify.close()
+  rimrafSync('./authdb')
 })
 
 test('Route without auth', t => {
