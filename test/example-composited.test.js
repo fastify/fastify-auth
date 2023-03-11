@@ -6,14 +6,12 @@ const build = require('./example-composited')
 
 let fastify = null
 
-t.teardown(() => {
-  fastify.close()
+t.teardown(async () => {
+  await fastify.close()
 })
 
-test('boot server', t => {
-  t.plan(1)
+t.before(() => {
   fastify = build()
-  t.error(false)
 })
 
 test('And Relation sucess for single case', t => {
