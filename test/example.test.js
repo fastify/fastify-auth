@@ -13,8 +13,8 @@ t.before(() => {
   fastify = build()
 })
 
-t.teardown(() => {
-  fastify.close()
+t.teardown(async () => {
+  await fastify.close()
   rimrafSync('./authdb')
 })
 
