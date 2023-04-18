@@ -26,8 +26,8 @@ function auth (pluginOptions) {
     }
 
     const options = Object.assign({
-      relation: pluginOptions.defaultRelation,
-      run: null
+        relation: pluginOptions.defaultRelation,
+        run: null
     }, opts)
 
     if (options.relation !== 'or' && options.relation !== 'and') {
@@ -39,7 +39,13 @@ function auth (pluginOptions) {
 
     /* eslint-disable-next-line no-var */
     for (var i = 0; i < functions.length; i++) {
-      functions[i] = functions[i].bind(this)
+      if (functions[i] instanceof Array) {
+        for (var j = 0; j < functions[i].length; j++) {
+          functions[i][j] = functions[i][j].bind(this)
+        }
+      } else {
+        functions[i] = [functions[i].bind(this)]
+      }
     }
 
     const instance = reusify(Auth)
@@ -53,8 +59,9 @@ function auth (pluginOptions) {
       obj.functions = this.functions
       obj.options = this.options
       obj.i = 0
-      obj.start = true
+      obj.j = 0
       obj.firstResult = null
+      obj.sufficient = false
 
       obj.nextAuth()
     }
@@ -64,21 +71,22 @@ function auth (pluginOptions) {
     function Auth () {
       this.next = null
       this.i = 0
-      this.start = true
+      this.j = 0
       this.functions = []
       this.options = {}
       this.request = null
       this.reply = null
       this.done = null
       this.firstResult = null
+      this.sufficient = false
 
       const that = this
 
       this.nextAuth = function nextAuth (err) {
-        const func = that.functions[that.i++]
+        const func = that.functions[that.i][that.j++]
 
         if (!func) {
-          that.completeAuth(err)
+          that.completeAuthArray(err)
           return
         }
 
@@ -94,31 +102,48 @@ function auth (pluginOptions) {
       }
 
       this.onAuth = function onAuth (err, results) {
-        if (that.options.relation === 'or') {
-          if (err) {
-            return that.nextAuth(err)
-          }
-
-          return that.completeAuth()
-        } else {
-          if (err) {
-            return that.completeAuth(err)
-          }
-
-          return that.nextAuth(err)
+        if (err) {
+          return that.completeAuthArray(err)
         }
+
+        return that.nextAuth(err)
       }
 
-      this.completeAuth = function (err) {
-        if (that.start) {
-          that.start = false
-          that.firstResult = err
+      this.completeAuthArray = function (err) {
+        if (err) {
+          if (that.options.relation === 'and') {
+            if (that.options.run === 'all') {
+              that.firstResult = that.firstResult ?? err
+            } else {
+              that.firstResult = err
+              this.completeAuth()
+              return
+            }
+          } else {
+            that.firstResult = that.sufficient ? null : err
+          }
+        } else {
+          if (that.options.relation === 'or') {
+            that.sufficient = true
+            that.firstResult = null
+
+            if (that.options.run !== 'all') {
+              this.completeAuth()
+              return
+            }
+          }
         }
 
-        if (that.options.run === 'all' && that.i < that.functions.length) {
+        if (that.i < that.functions.length - 1) {
+          that.i += 1
+          that.j = 0
           return that.nextAuth(err)
         }
 
+        this.completeAuth()
+      }
+
+      this.completeAuth = function () {
         if (that.firstResult && (!that.reply.raw.statusCode || that.reply.raw.statusCode < 400)) {
           that.reply.code(401)
         } else if (!that.firstResult && that.reply.raw.statusCode && that.reply.raw.statusCode >= 400) {

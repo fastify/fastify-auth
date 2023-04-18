@@ -70,8 +70,28 @@ function build (opts) {
 
     fastify.route({
       method: 'POST',
+      url: '/checkarrayand',
+      preHandler: fastify.auth([[fastify.verifyNumber], [fastify.verifyOdd]], { relation: 'and' }),
+      handler: (req, reply) => {
+        req.log.info('Auth route')
+        reply.send({ hello: 'world' })
+      }
+    })
+
+    fastify.route({
+      method: 'POST',
       url: '/checkor',
       preHandler: fastify.auth([fastify.verifyOdd, fastify.verifyBig]),
+      handler: (req, reply) => {
+        req.log.info('Auth route')
+        reply.send({ hello: 'world' })
+      }
+    })
+
+    fastify.route({
+      method: 'POST',
+      url: '/checkarrayor',
+      preHandler: fastify.auth([[fastify.verifyOdd], [fastify.verifyBig]]),
       handler: (req, reply) => {
         req.log.info('Auth route')
         reply.send({ hello: 'world' })
@@ -90,8 +110,48 @@ function build (opts) {
 
     fastify.route({
       method: 'POST',
+      url: '/singlearrayor',
+      preHandler: fastify.auth([[fastify.verifyOdd]]),
+      handler: (req, reply) => {
+        req.log.info('Auth route')
+        reply.send({ hello: 'world' })
+      }
+    })
+
+    fastify.route({
+      method: 'POST',
       url: '/singleand',
       preHandler: fastify.auth([fastify.verifyOdd], { relation: 'and' }),
+      handler: (req, reply) => {
+        req.log.info('Auth route')
+        reply.send({ hello: 'world' })
+      }
+    })
+
+    fastify.route({
+      method: 'POST',
+      url: '/singlearrayand',
+      preHandler: fastify.auth([[fastify.verifyOdd]], { relation: 'and' }),
+      handler: (req, reply) => {
+        req.log.info('Auth route')
+        reply.send({ hello: 'world' })
+      }
+    })
+
+    fastify.route({
+      method: 'POST',
+      url: '/singlearraycheckand',
+      preHandler: fastify.auth([[fastify.verifyNumber, fastify.verifyOdd]]),
+      handler: (req, reply) => {
+        req.log.info('Auth route')
+        reply.send({ hello: 'world' })
+      }
+    })
+
+    fastify.route({
+      method: 'POST',
+      url: '/checkarrayorsingle',
+      preHandler: fastify.auth([[fastify.verifyNumber, fastify.verifyOdd], fastify.verifyBig]),
       handler: (req, reply) => {
         req.log.info('Auth route')
         reply.send({ hello: 'world' })
