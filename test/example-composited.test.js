@@ -50,6 +50,42 @@ test('And Relation failed for single case', t => {
   })
 })
 
+test('And Relation sucess for single [Array] case', t => {
+  t.plan(2)
+
+  fastify.inject({
+    method: 'POST',
+    url: '/singlearrayand',
+    payload: {
+      n: 11
+    }
+  }, (err, res) => {
+    t.error(err)
+    const payload = JSON.parse(res.payload)
+    t.same(payload, { hello: 'world' })
+  })
+})
+
+test('And Relation failed for single [Array] case', t => {
+  t.plan(2)
+
+  fastify.inject({
+    method: 'POST',
+    url: '/singlearrayand',
+    payload: {
+      n: 10
+    }
+  }, (err, res) => {
+    t.error(err)
+    const payload = JSON.parse(res.payload)
+    t.same(payload, {
+      error: 'Unauthorized',
+      message: '`n` is not odd',
+      statusCode: 401
+    })
+  })
+})
+
 test('Or Relation sucess for single case', t => {
   t.plan(2)
 
@@ -72,6 +108,42 @@ test('Or Relation failed for single case', t => {
   fastify.inject({
     method: 'POST',
     url: '/singleor',
+    payload: {
+      n: 10
+    }
+  }, (err, res) => {
+    t.error(err)
+    const payload = JSON.parse(res.payload)
+    t.same(payload, {
+      error: 'Unauthorized',
+      message: '`n` is not odd',
+      statusCode: 401
+    })
+  })
+})
+
+test('Or Relation sucess for single [Array] case', t => {
+  t.plan(2)
+
+  fastify.inject({
+    method: 'POST',
+    url: '/singlearrayor',
+    payload: {
+      n: 11
+    }
+  }, (err, res) => {
+    t.error(err)
+    const payload = JSON.parse(res.payload)
+    t.same(payload, { hello: 'world' })
+  })
+})
+
+test('Or Relation failed for single [Array] case', t => {
+  t.plan(2)
+
+  fastify.inject({
+    method: 'POST',
+    url: '/singlearrayor',
     payload: {
       n: 10
     }
@@ -163,12 +235,46 @@ test('And Relation success', t => {
   })
 })
 
+test('[Array] notation And Relation success', t => {
+  t.plan(3)
+
+  fastify.inject({
+    method: 'POST',
+    url: '/checkarrayand',
+    payload: {
+      n: 11
+    }
+  }, (err, res) => {
+    t.error(err)
+    const payload = JSON.parse(res.payload)
+    t.same(payload, { hello: 'world' })
+    t.equal(res.statusCode, 200)
+  })
+})
+
 test('Or Relation success under first case', t => {
   t.plan(3)
 
   fastify.inject({
     method: 'POST',
     url: '/checkor',
+    payload: {
+      n: 1
+    }
+  }, (err, res) => {
+    t.error(err)
+    const payload = JSON.parse(res.payload)
+    t.same(payload, { hello: 'world' })
+    t.equal(res.statusCode, 200)
+  })
+})
+
+test('[Array] notation Or Relation success under first case', t => {
+  t.plan(3)
+
+  fastify.inject({
+    method: 'POST',
+    url: '/checkarrayor',
     payload: {
       n: 1
     }
@@ -197,6 +303,23 @@ test('Or Relation success under second case', t => {
   })
 })
 
+test('[Array] notation Or Relation success under second case', t => {
+  t.plan(3)
+
+  fastify.inject({
+    method: 'POST',
+    url: '/checkarrayor',
+    payload: {
+      n: 200
+    }
+  }, (err, res) => {
+    t.error(err)
+    const payload = JSON.parse(res.payload)
+    t.same(payload, { hello: 'world' })
+    t.equal(res.statusCode, 200)
+  })
+})
+
 test('Or Relation failed for both case', t => {
   t.plan(2)
 
@@ -205,6 +328,114 @@ test('Or Relation failed for both case', t => {
     url: '/checkor',
     payload: {
       n: 90
+    }
+  }, (err, res) => {
+    t.error(err)
+    const payload = JSON.parse(res.payload)
+    t.same(payload, {
+      error: 'Unauthorized',
+      message: '`n` is not big',
+      statusCode: 401
+    })
+  })
+})
+
+test('[Array] notation Or Relation failed for both case', t => {
+  t.plan(2)
+
+  fastify.inject({
+    method: 'POST',
+    url: '/checkarrayor',
+    payload: {
+      n: 90
+    }
+  }, (err, res) => {
+    t.error(err)
+    const payload = JSON.parse(res.payload)
+    t.same(payload, {
+      error: 'Unauthorized',
+      message: '`n` is not big',
+      statusCode: 401
+    })
+  })
+})
+
+test('single [Array] And Relation sucess', t => {
+  t.plan(2)
+
+  fastify.inject({
+    method: 'POST',
+    url: '/singlearraycheckand',
+    payload: {
+      n: 11
+    }
+  }, (err, res) => {
+    t.error(err)
+    const payload = JSON.parse(res.payload)
+    t.same(payload, { hello: 'world' })
+  })
+})
+
+test('single [Array] And Relation failed', t => {
+  t.plan(2)
+
+  fastify.inject({
+    method: 'POST',
+    url: '/singlearraycheckand',
+    payload: {
+      n: 10
+    }
+  }, (err, res) => {
+    t.error(err)
+    const payload = JSON.parse(res.payload)
+    t.same(payload, {
+      error: 'Unauthorized',
+      message: '`n` is not odd',
+      statusCode: 401
+    })
+  })
+})
+
+test('[Array] notation & single case Or Relation sucess under first case', t => {
+  t.plan(2)
+
+  fastify.inject({
+    method: 'POST',
+    url: '/checkarrayorsingle',
+    payload: {
+      n: 11
+    }
+  }, (err, res) => {
+    t.error(err)
+    const payload = JSON.parse(res.payload)
+    t.same(payload, { hello: 'world' })
+  })
+})
+
+test('[Array] notation & single case Or Relation sucess under second case', t => {
+  t.plan(2)
+
+  fastify.inject({
+    method: 'POST',
+    url: '/checkarrayorsingle',
+    payload: {
+      n: 1002
+    }
+  }, (err, res) => {
+    t.error(err)
+    const payload = JSON.parse(res.payload)
+    t.same(payload, { hello: 'world' })
+  })
+})
+
+test('[Array] notation & single case Or Relation failed', t => {
+  t.plan(2)
+
+  fastify.inject({
+    method: 'POST',
+    url: '/checkarrayorsingle',
+    payload: {
+      n: 2
     }
   }, (err, res) => {
     t.error(err)

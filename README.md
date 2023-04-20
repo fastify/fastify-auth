@@ -73,6 +73,40 @@ fastify
   })
 ```
 
+If you need composited authentication, such as verifying user account passwords and levels or meeting VIP eligibility criteria. e.g. [(verifyUserPassword `and` verifyLevel) `or` (verifyVIP)]
+```js
+fastify
+  .decorate('verifyUserPassword', function (request, reply, done) {
+    // your validation logic
+    done() // pass an error if the authentication fails
+  })
+  .decorate('verifyLevel', function (request, reply, done) {
+    // your validation logic
+    done() // pass an error if the authentication fails
+  })
+  .decorate('verifyVIP', function (request, reply, done) {
+    // your validation logic
+    done() // pass an error if the authentication fails
+  })
+  .register(require('@fastify/auth'))
+  .after(() => {
+    fastify.route({
+      method: 'POST',
+      url: '/auth-multiple',
+      preHandler: fastify.auth([
+        [fastify.verifyUserPassword, fastify.verifyLevel], // The arrays within an array always have an AND relationship.
+        fastify.verifyVIP
+      ], {
+        relation: 'or' // default relation
+      }),
+      handler: (req, reply) => {
+        req.log.info('Auth route')
+        reply.send({ hello: 'world' })
+      }
+    })
+  })
+```
+
 You can use the `defaultRelation` option while registering the plugin, to change the default `relation`:
 ```js
 fastify.register(require('@fastify/auth'), { defaultRelation: 'and'} )

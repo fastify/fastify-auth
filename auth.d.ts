@@ -3,7 +3,7 @@ import { ContextConfigDefault, RouteGenericInterface, FastifyInstance, FastifyPl
 declare module 'fastify' {
   interface FastifyInstance<RawServer, RawRequest, RawReply, Logger, TypeProvider> {
     auth(
-      functions: fastifyAuth.FastifyAuthFunction[],
+      functions: fastifyAuth.FastifyAuthFunction[] | (fastifyAuth.FastifyAuthFunction | fastifyAuth.FastifyAuthFunction[])[],
       options?: {
         relation?: 'and' | 'or',
         run?: 'all'
