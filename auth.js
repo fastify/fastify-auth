@@ -39,12 +39,13 @@ function auth (pluginOptions) {
 
     /* eslint-disable-next-line no-var */
     for (var i = 0; i < functions.length; i++) {
-      if (functions[i] instanceof Array) {
-        for (let j = 0; j < functions[i].length; j++) {
+      if (Array.isArray(functions[i]) === false) {
+        functions[i] = [functions[i].bind(this)]
+      } else {
+        /* eslint-disable-next-line no-var */
+        for (var j = 0; j < functions[i].length; j++) {
           functions[i][j] = functions[i][j].bind(this)
         }
-      } else {
-        functions[i] = [functions[i].bind(this)]
       }
     }
 
