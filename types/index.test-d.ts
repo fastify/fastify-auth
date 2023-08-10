@@ -1,5 +1,5 @@
 import fastify, { FastifyRequest, FastifyReply, preHandlerHookHandler, FastifyInstance } from 'fastify';
-import fastifyAuth from '../auth'
+import * as fastifyAuth from '..'
 import { expectType } from 'tsd';
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 import { JsonSchemaToTsProvider } from '@fastify/type-provider-json-schema-to-ts'

@@ -7,7 +7,7 @@
     "url": "git+https://github.com/fastify/fastify-auth.git"
   },
   "main": "auth.js",
-  "types": "auth.d.ts",
+  "types": "types/index.d.ts",
   "scripts": {
     "clean": "rimraf authdb",
     "lint": "standard",
@@ -45,9 +45,6 @@
   "dependencies": {
     "fastify-plugin": "^4.0.0",
     "reusify": "^1.0.4"
-  },
-  "tsd": {
-    "directory": "test"
   },
   "publishConfig": {
     "access": "public"
