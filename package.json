@@ -31,7 +31,7 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "@fastify/jwt": "^7.0.0",
+    "@fastify/jwt": "^8.0.0",
     "@fastify/leveldb": "^5.0.1",
     "@fastify/pre-commit": "^2.0.2",
     "@fastify/type-provider-json-schema-to-ts": "^2.1.1",
