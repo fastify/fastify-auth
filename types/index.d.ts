@@ -1,18 +1,21 @@
 import {
   ContextConfigDefault,
-  RouteGenericInterface,
   FastifyInstance,
   FastifyPluginCallback,
   FastifyReply,
   FastifyRequest,
   FastifySchema,
+  RouteGenericInterface,
   preHandlerHookHandler
 } from 'fastify';
 
 declare module 'fastify' {
   interface FastifyInstance<RawServer, RawRequest, RawReply, Logger, TypeProvider> {
-    auth(
-      functions: fastifyAuth.FastifyAuthFunction[] | (fastifyAuth.FastifyAuthFunction | fastifyAuth.FastifyAuthFunction[])[],
+    auth<
+      Request extends FastifyRequest = FastifyRequest,
+      Reply extends FastifyReply = FastifyReply
+    >(
+      functions: fastifyAuth.FastifyAuthFunction<Request, Reply>[] | (fastifyAuth.FastifyAuthFunction<Request, Reply> | fastifyAuth.FastifyAuthFunction<Request, Reply>[])[],
       options?: {
         relation?: fastifyAuth.FastifyAuthRelation;
         run?: 'all';
@@ -26,10 +29,13 @@ type FastifyAuth = FastifyPluginCallback<fastifyAuth.FastifyAuthPluginOptions>
 declare namespace fastifyAuth {
   export type FastifyAuthRelation = 'and' | 'or'
 
-  export type FastifyAuthFunction = (
+  export type FastifyAuthFunction<
+    Request extends FastifyRequest = FastifyRequest,
+    Reply extends FastifyReply = FastifyReply
+  > = (
     this: FastifyInstance,
-    request: FastifyRequest,
-    reply: FastifyReply,
+    request: Request,
+    reply: Reply,
     done: (error?: Error) => void
   ) => void;
 

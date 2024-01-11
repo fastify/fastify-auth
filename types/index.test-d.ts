@@ -1,4 +1,4 @@
-import fastify, { FastifyRequest, FastifyReply, preHandlerHookHandler, FastifyInstance } from 'fastify';
+import fastify, { FastifyInstance, FastifyReply, FastifyRequest, preHandlerHookHandler } from 'fastify';
 import fastifyAuth from '..'
 import { expectType } from 'tsd';
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
@@ -58,3 +58,60 @@ jsonSchemaToTS.route({
   preHandler: jsonSchemaToTS.auth([]),
   handler: () => {}
 })
+
+declare module "fastify" {
+  interface FastifyRequest {
+    identity: {actorId: string};
+  }
+
+  interface FastifyInstance {
+    authenticate: (request: FastifyRequest) => Promise<void>;
+  }
+}
+
+export const usersMutationAccessPolicy =
+  (fastify: FastifyInstance) =>
+    async (
+      request: FastifyRequest<{
+        Params: { userId: string }
+      }>,
+    ): Promise<void> => {
+      const { actorId } = request.identity;
+      const isOwner = actorId === request.params.userId;
+
+      if (isOwner) {
+        return;
+      }
+
+      fastify.log.warn("Actor should not be able to see this route");
+
+      throw new Error(request.params.userId);
+    };
+
+async function usersController(fastify: FastifyInstance): Promise<void> {
+  fastify.patch<{
+    Params: { userId: string };
+    Body: { name: string };
+  }>(
+    "/:userId",
+    {
+      onRequest: fastify.auth([
+        usersMutationAccessPolicy(fastify),
+      ]),
+    },
+    async (req, res) => ({ success: true }),
+  );
+}
+
+async function usersControllerV2(fastify: FastifyInstance): Promise<void> {
+  fastify.patch<{
+    Params: { userId: string };
+    Body: { name: string };
+  }>(
+    "/:userId",
+    {
+      onRequest: usersMutationAccessPolicy(fastify),
+    },
+    async (req, res) => ({ success: true }),
+  );
+}
