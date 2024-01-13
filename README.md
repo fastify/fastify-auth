@@ -114,7 +114,7 @@ fastify.register(require('@fastify/auth'), { defaultRelation: 'and'} )
 
 _For more examples, please check [`example-composited.js`](test/example-composited.js)_
 
-This plugin support `callback` and `Promise` returned by the functions. Note that an `async` function **does not have** to call the `done` parameter, otherwise the route handler to which the auth methods are linked to [might be called multiple times](https://www.fastify.io/docs/latest/Hooks/#respond-to-a-request-from-a-hook):
+This plugin support `callback` and `Promise` returned by the functions. Note that an `async` function **does not have** to call the `done` parameter, otherwise the route handler to which the auth methods are linked to [might be called multiple times](https://fastify.dev/docs/latest/Reference/Hooks/#respond-to-a-request-from-a-hook):
 ```js
 fastify
   .decorate('asyncVerifyJWTandLevel', async function (request, reply) {
@@ -190,7 +190,7 @@ The difference between the two approaches is that if you use the route level `pr
 
 ### `onRequest` vs. `preHandler` hook
 
-The main difference between the `onRequest` and `preHandler` stages of the [Fastify Lifecycle](https://www.fastify.io/docs/latest/Reference/Lifecycle/) is that the body payload is not parsed in the  `onRequest` stage. Parsing the body can be a potential security risk, as it can be used for denial of service (DoS) attacks. Therefore, it is recommended to avoid parsing the body for unauthorized access.
+The main difference between the `onRequest` and `preHandler` stages of the [Fastify Lifecycle](https://www.fastify.dev/docs/latest/Reference/Lifecycle/) is that the body payload is not parsed in the  `onRequest` stage. Parsing the body can be a potential security risk, as it can be used for denial of service (DoS) attacks. Therefore, it is recommended to avoid parsing the body for unauthorized access.
 
 Using the `@fastify/auth` plugin in the `preHandler` hook can result in unnecessary memory allocation if a malicious user sends a large payload in the request body and the request is unauthorized. In this case, Fastify will parse the body, even though the request is not authorized, leading to unnecessary memory allocation. To avoid this, it is recommended to use the `onRequest` hook for authentication, if the authentication method does not require the request body, such as `@fastify/jwt`, which expects the authentication in the request header.
 
