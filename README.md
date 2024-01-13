@@ -114,7 +114,7 @@ fastify.register(require('@fastify/auth'), { defaultRelation: 'and'} )
 
 _For more examples, please check [`example-composited.js`](test/example-composited.js)_
 
-This plugin support `callback` and `Promise` returned by the functions. Note that an `async` function **does not have** to call the `done` parameter, otherwise the route handler to which the auth methods are linked to [might be called multiple times](https://www.fastify.dev/docs/latest/Hooks/#respond-to-a-request-from-a-hook):
+This plugin support `callback` and `Promise` returned by the functions. Note that an `async` function **does not have** to call the `done` parameter, otherwise the route handler to which the auth methods are linked to [might be called multiple times](https://fastify.dev/docs/latest/Reference/Hooks/#respond-to-a-request-from-a-hook):
 ```js
 fastify
   .decorate('asyncVerifyJWTandLevel', async function (request, reply) {
