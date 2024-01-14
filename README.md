@@ -144,7 +144,7 @@ fastify
 ```
 
 
-Keep in mind that route definition should either be done as [a plugin](https://github.com/fastify/fastify/blob/master/docs/Plugins.md) or within an `.after()` callback.
+Keep in mind that route definition should either be done as [a plugin](https://github.com/fastify/fastify/blob/master/docs/Reference/Plugins.md) or within an `.after()` callback.
 For a complete example implementation, see [example.js](test/example.js).
 
 `@fastify/auth` will run all your authentication methods and your request will continue if at least one succeeds, otherwise it will return an error to the client.
