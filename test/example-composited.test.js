@@ -14,7 +14,7 @@ t.before(() => {
   fastify = build()
 })
 
-test('And Relation sucess for single case', t => {
+test('And Relation success for single case', t => {
   t.plan(2)
 
   fastify.inject({
@@ -86,7 +86,7 @@ test('And Relation failed for single [Array] case', t => {
   })
 })
 
-test('Or Relation sucess for single case', t => {
+test('Or Relation success for single case', t => {
   t.plan(2)
 
   fastify.inject({
@@ -122,7 +122,7 @@ test('Or Relation failed for single case', t => {
   })
 })
 
-test('Or Relation sucess for single [Array] case', t => {
+test('Or Relation success for single [Array] case', t => {
   t.plan(2)
 
   fastify.inject({
@@ -252,6 +252,80 @@ test('[Array] notation And Relation success', t => {
   })
 })
 
+test('And Relation with Or relation inside sub-array success', t => {
+  t.plan(3)
+
+  fastify.inject({
+    method: 'POST',
+    url: '/check-composite-and',
+    payload: {
+      n: 11
+    }
+  }, (err, res) => {
+    t.error(err)
+    const payload = JSON.parse(res.payload)
+    t.same(payload, { hello: 'world' })
+    t.equal(res.statusCode, 200)
+  })
+})
+
+test('And Relation with Or relation inside sub-array failed', t => {
+  t.plan(2)
+
+  fastify.inject({
+    method: 'POST',
+    url: '/check-composite-and',
+    payload: {
+      n: 4
+    }
+  }, (err, res) => {
+    t.error(err)
+    const payload = JSON.parse(res.payload)
+    t.same(payload, {
+      error: 'Unauthorized',
+      message: '`n` is not big',
+      statusCode: 401
+    })
+  })
+})
+
+test('And Relation with Or relation inside sub-array with async functions success', t => {
+  t.plan(3)
+
+  fastify.inject({
+    method: 'POST',
+    url: '/check-composite-and-async',
+    payload: {
+      n: 11
+    }
+  }, (err, res) => {
+    t.error(err)
+    const payload = JSON.parse(res.payload)
+    t.same(payload, { hello: 'world' })
+    t.equal(res.statusCode, 200)
+  })
+})
+
+test('And Relation with Or relation inside sub-array with async functions failed', t => {
+  t.plan(2)
+
+  fastify.inject({
+    method: 'POST',
+    url: '/check-composite-and-async',
+    payload: {
+      n: 4
+    }
+  }, (err, res) => {
+    t.error(err)
+    const payload = JSON.parse(res.payload)
+    t.same(payload, {
+      error: 'Unauthorized',
+      message: '`n` is not big',
+      statusCode: 401
+    })
+  })
+})
+
 test('Or Relation success under first case', t => {
   t.plan(3)
 
@@ -360,7 +434,7 @@ test('[Array] notation Or Relation failed for both case', t => {
   })
 })
 
-test('single [Array] And Relation sucess', t => {
+test('single [Array] And Relation success', t => {
   t.plan(2)
 
   fastify.inject({
@@ -396,7 +470,43 @@ test('single [Array] And Relation failed', t => {
   })
 })
 
-test('[Array] notation & single case Or Relation sucess under first case', t => {
+test('Two sub-arrays Or Relation success', t => {
+  t.plan(2)
+
+  fastify.inject({
+    method: 'POST',
+    url: '/check-two-sub-arrays-or',
+    payload: {
+      n: 11
+    }
+  }, (err, res) => {
+    t.error(err)
+    const payload = JSON.parse(res.payload)
+    t.same(payload, { hello: 'world' })
+  })
+})
+
+test('Two sub-arrays Or Relation fail', t => {
+  t.plan(2)
+
+  fastify.inject({
+    method: 'POST',
+    url: '/check-two-sub-arrays-or',
+    payload: {
+      n: 4
+    }
+  }, (err, res) => {
+    t.error(err)
+    const payload = JSON.parse(res.payload)
+    t.same(payload, {
+      error: 'Unauthorized',
+      message: '`n` is not odd',
+      statusCode: 401
+    })
+  })
+})
+
+test('[Array] notation & single case Or Relation success under first case', t => {
   t.plan(2)
 
   fastify.inject({
@@ -412,7 +522,7 @@ test('[Array] notation & single case Or Relation sucess under first case', t => 
   })
 })
 
-test('[Array] notation & single case Or Relation sucess under second case', t => {
+test('[Array] notation & single case Or Relation success under second case', t => {
   t.plan(2)
 
   fastify.inject({
@@ -444,6 +554,46 @@ test('[Array] notation & single case Or Relation failed', t => {
       error: 'Unauthorized',
       message: '`n` is not big',
       statusCode: 401
+    })
+  })
+})
+
+test('And Relation with Or relation inside sub-array with run: all', t => {
+  t.plan(2)
+
+  fastify.inject({
+    method: 'POST',
+    url: '/check-composite-and-run-all',
+    payload: {
+      n: 11
+    }
+  }, (err, res) => {
+    t.error(err)
+    const payload = JSON.parse(res.payload)
+    t.same(payload, {
+      odd: true,
+      big: false,
+      number: true
+    })
+  })
+})
+
+test('Or Relation with And relation inside sub-array with run: all', t => {
+  t.plan(2)
+
+  fastify.inject({
+    method: 'POST',
+    url: '/check-composite-or-run-all',
+    payload: {
+      n: 110
+    }
+  }, (err, res) => {
+    t.error(err)
+    const payload = JSON.parse(res.payload)
+    t.same(payload, {
+      odd: false,
+      big: true,
+      number: true
     })
   })
 })
@@ -631,6 +781,15 @@ test('Or Relation run all fail', t => {
       statusCode: 401
     })
   })
+})
+
+test('Nested sub-arrays not supported', t => {
+  t.plan(1)
+  try {
+    fastify.auth([[fastify.verifyBig, [fastify.verifyNumber]]])
+  } catch (err) {
+    t.same(err.message, 'Nesting sub-arrays is not supported')
+  }
 })
 
 test('And Relation run all', t => {
