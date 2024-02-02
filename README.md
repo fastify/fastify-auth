@@ -73,7 +73,8 @@ fastify
   })
 ```
 
-If you need composited authentication, such as verifying user account passwords and levels or meeting VIP eligibility criteria. e.g. [(verifyUserPassword `and` verifyLevel) `or` (verifyVIP)]
+If you need composite authentication, such as verifying user account passwords and levels or meeting VIP eligibility criteria, you can use nested arrays.
+For example if you need the following logic: [(verifyUserPassword `and` verifyLevel) `or` (verifyVIP)], it can be achieved with the code below:
 ```js
 fastify
   .decorate('verifyUserPassword', function (request, reply, done) {
@@ -94,7 +95,7 @@ fastify
       method: 'POST',
       url: '/auth-multiple',
       preHandler: fastify.auth([
-        [fastify.verifyUserPassword, fastify.verifyLevel], // The arrays within an array always have an AND relationship.
+        [fastify.verifyUserPassword, fastify.verifyLevel], // The arrays within an array have the opposite relation to the main (default) relation.
         fastify.verifyVIP
       ], {
         relation: 'or' // default relation
@@ -106,6 +107,15 @@ fastify
     })
   })
 ```
+
+If the `relation` (`defaultRelation`) parameter is `and`, then the relation inside sub-arrays will be `or`.
+If the `relation` (`defaultRelation`) parameter is `or`, then the relation inside sub-arrays will be `and`.
+
+| auth code        | resulting logical expression           | 
+| ------------- |:-------------:| 
+| `fastify.auth([f1, f2, [f3, f4]], { relation: 'or' })`  | `f1 OR f2 OR (f3 AND f4)` | 
+| `fastify.auth([f1, f2, [f3, f4]], { relation: 'and' })` | `f1 AND f2 AND (f3 OR f4)` | 
+
 
 You can use the `defaultRelation` option while registering the plugin, to change the default `relation`:
 ```js

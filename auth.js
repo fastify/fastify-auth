@@ -40,10 +40,13 @@ function auth (pluginOptions) {
     /* eslint-disable-next-line no-var */
     for (var i = 0; i < functions.length; i++) {
       if (Array.isArray(functions[i]) === false) {
-        functions[i] = [functions[i].bind(this)]
+        functions[i] = functions[i].bind(this)
       } else {
         /* eslint-disable-next-line no-var */
         for (var j = 0; j < functions[i].length; j++) {
+          if (Array.isArray(functions[i][j])) {
+            throw new Error('Nesting sub-arrays is not supported')
+          }
           functions[i][j] = functions[i][j].bind(this)
         }
       }
@@ -61,8 +64,9 @@ function auth (pluginOptions) {
       obj.options = this.options
       obj.i = 0
       obj.j = 0
-      obj.firstResult = null
-      obj.sufficient = false
+      obj.currentError = null
+      obj.skipFurtherErrors = false
+      obj.skipFurtherArrayErrors = false
 
       obj.nextAuth()
     }
@@ -78,80 +82,114 @@ function auth (pluginOptions) {
       this.request = null
       this.reply = null
       this.done = null
-      this.firstResult = null
-      this.sufficient = false
+      this.currentError = null
+      this.skipFurtherErrors = false
+      this.skipFurtherArrayErrors = false
 
       const that = this
 
       this.nextAuth = function nextAuth (err) {
-        const func = that.functions[that.i][that.j++]
+        if (!that.skipFurtherErrors) that.currentError = err
 
+        const func = that.functions[that.i++]
         if (!func) {
-          that.completeAuthArray(err)
-          return
+          return that.completeAuth()
         }
 
+        if (!Array.isArray(func)) {
+          that.processAuth(func, (err) => {
+            if (that.options.run !== 'all') that.currentError = err
+
+            if (that.options.relation === 'and') {
+              if (err && that.options.run !== 'all') {
+                that.completeAuth()
+              } else {
+                if (err && that.options.run === 'all' && !that.skipFurtherErrors) {
+                  that.skipFurtherErrors = true
+                  that.currentError = err
+                }
+                that.nextAuth(err)
+              }
+            } else {
+              if (!err && that.options.run !== 'all') {
+                that.completeAuth()
+              } else {
+                if (!err && that.options.run === 'all') {
+                  that.skipFurtherErrors = true
+                  that.currentError = null
+                }
+                that.nextAuth(err)
+              }
+            }
+          })
+        } else {
+          that.j = 0
+          that.skipFurtherArrayErrors = false
+          that.processAuthArray(func, (err) => {
+            if (that.options.relation === 'and') { // sub-array relation is OR
+              if (!err && that.options.run !== 'all') {
+                that.nextAuth(err)
+              } else {
+                that.currentError = err
+                that.nextAuth(err)
+              }
+            } else { // sub-array relation is AND
+              if (err && that.options.run !== 'all') {
+                that.currentError = err
+                that.nextAuth(err)
+              } else {
+                if (!err && that.options.run !== 'all') {
+                  that.currentError = null
+                  that.completeAuth()
+                }
+                that.nextAuth(err)
+              }
+            }
+          })
+        }
+      }
+
+      this.processAuthArray = function processAuthArray (funcs, callback, err) {
+        const func = funcs[that.j++]
+        if (!func) return callback(err)
+
+        that.processAuth(func, (err) => {
+          if (that.options.relation === 'and') { // sub-array relation is OR
+            if (!err && that.options.run !== 'all') {
+              callback(err)
+            } else {
+              if (!err && that.options.run === 'all') {
+                that.skipFurtherArrayErrors = true
+              }
+              that.processAuthArray(funcs, callback, that.skipFurtherArrayErrors ? null : err)
+            }
+          } else { // sub-array relation is AND
+            if (err && that.options.run !== 'all') callback(err)
+            else that.processAuthArray(funcs, callback, err)
+          }
+        })
+      }
+
+      this.processAuth = function processAuth (func, callback) {
         try {
-          const maybePromise = func(that.request, that.reply, that.onAuth)
+          const maybePromise = func(that.request, that.reply, callback)
 
           if (maybePromise && typeof maybePromise.then === 'function') {
-            maybePromise.then(results => that.onAuth(null, results), that.onAuth)
+            maybePromise.then(() => callback(null), callback)
           }
         } catch (err) {
-          this.onAuth(err)
+          callback(err)
         }
-      }
-
-      this.onAuth = function onAuth (err, results) {
-        if (err) {
-          return that.completeAuthArray(err)
-        }
-
-        return that.nextAuth(err)
-      }
-
-      this.completeAuthArray = function (err) {
-        if (err) {
-          if (that.options.relation === 'and') {
-            if (that.options.run === 'all') {
-              that.firstResult = that.firstResult ?? err
-            } else {
-              that.firstResult = err
-              this.completeAuth()
-              return
-            }
-          } else {
-            that.firstResult = that.sufficient ? null : err
-          }
-        } else {
-          if (that.options.relation === 'or') {
-            that.sufficient = true
-            that.firstResult = null
-
-            if (that.options.run !== 'all') {
-              this.completeAuth()
-              return
-            }
-          }
-        }
-
-        if (that.i < that.functions.length - 1) {
-          that.i += 1
-          that.j = 0
-          return that.nextAuth(err)
-        }
-
-        this.completeAuth()
       }
 
       this.completeAuth = function () {
-        if (that.firstResult && (!that.reply.raw.statusCode || that.reply.raw.statusCode < 400)) {
+        if (that.currentError && (!that.reply.raw.statusCode || that.reply.raw.statusCode < 400)) {
           that.reply.code(401)
-        } else if (!that.firstResult && that.reply.raw.statusCode && that.reply.raw.statusCode >= 400) {
+        } else if (!that.currentError && that.reply.raw.statusCode && that.reply.raw.statusCode >= 400) {
           that.reply.code(200)
         }
 
-        that.done(that.firstResult)
+        that.done(that.currentError)
         instance.release(that)
       }
     }

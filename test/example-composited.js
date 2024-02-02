@@ -12,6 +12,8 @@ function build (opts) {
   fastify.decorate('verifyNumber', verifyNumber)
   fastify.decorate('verifyOdd', verifyOdd)
   fastify.decorate('verifyBig', verifyBig)
+  fastify.decorate('verifyOddAsync', verifyOddAsync)
+  fastify.decorate('verifyBigAsync', verifyBigAsync)
 
   function verifyNumber (request, reply, done) {
     const n = request.body.n
@@ -49,6 +51,24 @@ function build (opts) {
     return done()
   }
 
+  function verifyOddAsync (request, reply) {
+    return new Promise((resolve, reject) => {
+      verifyOdd(request, reply, (err) => {
+        if (err) reject(err)
+        resolve()
+      })
+    })
+  }
+
+  function verifyBigAsync (request, reply) {
+    return new Promise((resolve, reject) => {
+      verifyBig(request, reply, (err) => {
+        if (err) reject(err)
+        resolve()
+      })
+    })
+  }
+
   function routes () {
     fastify.route({
       method: 'GET',
@@ -75,6 +95,84 @@ function build (opts) {
       handler: (req, reply) => {
         req.log.info('Auth route')
         reply.send({ hello: 'world' })
+      }
+    })
+
+    fastify.route({
+      method: 'POST',
+      url: '/check-composite-and',
+      preHandler: fastify.auth([fastify.verifyNumber, [fastify.verifyOdd, fastify.verifyBig]], { relation: 'and' }),
+      handler: (req, reply) => {
+        req.log.info('Auth route')
+        reply.send({ hello: 'world' })
+      }
+    })
+
+    fastify.route({
+      method: 'POST',
+      url: '/check-composite-and-async',
+      preHandler: fastify.auth([fastify.verifyNumber, [fastify.verifyOddAsync, fastify.verifyBigAsync]], { relation: 'and' }),
+      handler: (req, reply) => {
+        req.log.info('Auth route')
+        reply.send({ hello: 'world' })
+      }
+    })
+
+    fastify.route({
+      method: 'POST',
+      url: '/check-composite-and-run-all',
+      preHandler: fastify.auth([fastify.verifyNumber, [fastify.verifyOdd, fastify.verifyBig]], { relation: 'and', run: 'all' }),
+      handler: (req, reply) => {
+        req.log.info('Auth route')
+        reply.send({
+          odd: req.odd,
+          big: req.big,
+          number: req.number
+        })
+      }
+    })
+
+    fastify.route({
+      method: 'POST',
+      url: '/check-composite-or',
+      preHandler: fastify.auth([fastify.verifyNumber, [fastify.verifyOdd, fastify.verifyBig]], { relation: 'or' }),
+      handler: (req, reply) => {
+        req.log.info('Auth route')
+        reply.send({ hello: 'world' })
+      }
+    })
+
+    fastify.route({
+      method: 'POST',
+      url: '/check-two-sub-arrays-or',
+      preHandler: fastify.auth([[fastify.verifyBigAsync], [fastify.verifyOddAsync]], { relation: 'or' }),
+      handler: (req, reply) => {
+        req.log.info('Auth route')
+        reply.send({ hello: 'world' })
+      }
+    })
+
+    fastify.route({
+      method: 'POST',
+      url: '/check-composite-or-async',
+      preHandler: fastify.auth([fastify.verifyNumber, [fastify.verifyOddAsync, fastify.verifyBigAsync]], { relation: 'or' }),
+      handler: (req, reply) => {
+        req.log.info('Auth route')
+        reply.send({ hello: 'world' })
+      }
+    })
+
+    fastify.route({
+      method: 'POST',
+      url: '/check-composite-or-run-all',
+      preHandler: fastify.auth([fastify.verifyNumber, [fastify.verifyOdd, fastify.verifyBig]], { relation: 'or', run: 'all' }),
+      handler: (req, reply) => {
+        req.log.info('Auth route')
+        reply.send({
+          odd: req.odd,
+          big: req.big,
+          number: req.number
+        })
       }
     })
 
