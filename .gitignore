@@ -148,6 +148,9 @@ yarn.lock
 .vscode
 .idea
 
+#tap files
+.tap/
+
 # test db
 authdb
 authdb-async
