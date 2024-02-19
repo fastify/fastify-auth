@@ -52,6 +52,7 @@ function build (opts) {
   }
 
   function verifyOddAsync (request, reply) {
+    request.verifyOddAsyncCalled = true
     return new Promise((resolve, reject) => {
       verifyOdd(request, reply, (err) => {
         if (err) reject(err)
@@ -61,6 +62,7 @@ function build (opts) {
   }
 
   function verifyBigAsync (request, reply) {
+    request.verifyBigAsyncCalled = true
     return new Promise((resolve, reject) => {
       verifyBig(request, reply, (err) => {
         if (err) reject(err)
@@ -149,6 +151,19 @@ function build (opts) {
       handler: (req, reply) => {
         req.log.info('Auth route')
         reply.send({ hello: 'world' })
+      }
+    })
+
+    fastify.route({
+      method: 'POST',
+      url: '/check-two-sub-arrays-or-2',
+      preHandler: fastify.auth([[fastify.verifyBigAsync], [fastify.verifyOddAsync]], { relation: 'or' }),
+      handler: (req, reply) => {
+        req.log.info('Auth route')
+        reply.send({
+          verifyBigAsyncCalled: !!req.verifyBigAsyncCalled,
+          verifyOddAsyncCalled: !!req.verifyOddAsyncCalled
+        })
       }
     })
 
