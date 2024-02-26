@@ -140,7 +140,7 @@ function auth (pluginOptions) {
               } else {
                 if (!err && that.options.run !== 'all') {
                   that.currentError = null
-                  that.completeAuth()
+                  return that.completeAuth()
                 }
                 that.nextAuth(err)
               }

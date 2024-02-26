@@ -486,6 +486,26 @@ test('Two sub-arrays Or Relation success', t => {
   })
 })
 
+test('Two sub-arrays Or Relation called sequentially', t => {
+  t.plan(2)
+
+  fastify.inject({
+    method: 'POST',
+    url: '/check-two-sub-arrays-or-2',
+    payload: {
+      n: 110
+    }
+  }, (err, res) => {
+    t.error(err)
+    const payload = JSON.parse(res.payload)
+
+    t.same(payload, {
+      verifyBigAsyncCalled: true,
+      verifyOddAsyncCalled: false
+    })
+  })
+})
+
 test('Two sub-arrays Or Relation fail', t => {
   t.plan(2)
 
