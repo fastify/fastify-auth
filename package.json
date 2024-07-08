@@ -41,7 +41,7 @@
     "rimraf": "^5.0.5",
     "standard": "^17.1.0",
     "tap": "^18.7.1",
-    "tsd": "^0.30.7"
+    "tsd": "^0.31.1"
   },
   "dependencies": {
     "fastify-plugin": "^5.0.0-pre.fv5.1",
