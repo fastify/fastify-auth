@@ -38,7 +38,7 @@
     "@fastify/type-provider-typebox": "^5.0.0-pre.fv5.1",
     "@types/node": "^20.11.30",
     "fastify": "^5.0.0-alpha.3",
-    "rimraf": "^5.0.5",
+    "rimraf": "^6.0.1",
     "standard": "^17.1.0",
     "tap": "^18.7.1",
     "tsd": "^0.31.1"
