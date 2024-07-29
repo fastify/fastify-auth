@@ -36,7 +36,7 @@
     "@fastify/pre-commit": "^2.1.0",
     "@fastify/type-provider-json-schema-to-ts": "^4.0.0-pre.fv5.1",
     "@fastify/type-provider-typebox": "^5.0.0-pre.fv5.1",
-    "@types/node": "^20.11.30",
+    "@types/node": "^22.0.0",
     "fastify": "^5.0.0-alpha.3",
     "rimraf": "^6.0.1",
     "standard": "^17.1.0",
