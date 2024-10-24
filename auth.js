@@ -37,13 +37,11 @@ function auth (pluginOptions) {
       throw new Error('The value of options.run must be \'all\'')
     }
 
-    /* eslint-disable-next-line no-var */
-    for (var i = 0; i < functions.length; i++) {
+    for (let i = 0; i < functions.length; i++) {
       if (Array.isArray(functions[i]) === false) {
         functions[i] = functions[i].bind(this)
       } else {
-        /* eslint-disable-next-line no-var */
-        for (var j = 0; j < functions[i].length; j++) {
+        for (let j = 0; j < functions[i].length; j++) {
           if (Array.isArray(functions[i][j])) {
             throw new Error('Nesting sub-arrays is not supported')
           }
