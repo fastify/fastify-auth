@@ -4,7 +4,7 @@
 [![NPM version](https://img.shields.io/npm/v/@fastify/auth.svg?style=flat)](https://www.npmjs.com/package/@fastify/auth)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://standardjs.com/)
 
-This module does not provide an authentication strategy, but it provides a very fast utility to handle authentication (and multiple strategies) in your routes, without adding overhead.  
+This module does not provide an authentication strategy, but it provides a very fast utility to handle authentication (and multiple strategies) in your routes, without adding overhead.
 Check out a complete example [here](test/example.js).
 
 ## Install
@@ -111,10 +111,10 @@ fastify
 If the `relation` (`defaultRelation`) parameter is `and`, then the relation inside sub-arrays will be `or`.
 If the `relation` (`defaultRelation`) parameter is `or`, then the relation inside sub-arrays will be `and`.
 
-| auth code        | resulting logical expression           | 
-| ------------- |:-------------:| 
-| `fastify.auth([f1, f2, [f3, f4]], { relation: 'or' })`  | `f1 OR f2 OR (f3 AND f4)` | 
-| `fastify.auth([f1, f2, [f3, f4]], { relation: 'and' })` | `f1 AND f2 AND (f3 OR f4)` | 
+| auth code        | resulting logical expression           |
+| ------------- |:-------------:|
+| `fastify.auth([f1, f2, [f3, f4]], { relation: 'or' })`  | `f1 OR f2 OR (f3 AND f4)` |
+| `fastify.auth([f1, f2, [f3, f4]], { relation: 'and' })` | `f1 AND f2 AND (f3 OR f4)` |
 
 
 You can use the `defaultRelation` option while registering the plugin, to change the default `relation`:
