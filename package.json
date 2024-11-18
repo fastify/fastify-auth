@@ -6,6 +6,10 @@
     "type": "git",
     "url": "git+https://github.com/fastify/fastify-auth.git"
   },
+  "bugs": {
+    "url": "https://github.com/fastify/fastify-auth/issues"
+  },
+  "homepage": "https://github.com/fastify/fastify-auth#readme",
   "main": "auth.js",
   "type": "commonjs",
   "types": "types/index.d.ts",
