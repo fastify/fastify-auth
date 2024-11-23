@@ -9,8 +9,8 @@ test.after(async () => {
   await fastify.close()
 })
 
-test.before(async () => {
-  fastify = await build()
+test.before(() => {
+  fastify = build()
 })
 
 test('And Relation success for single case', (t, done) => {
