@@ -1,22 +1,23 @@
 'use strict'
 
-const { test } = require('tap')
+const { test } = require('node:test')
 const Fastify = require('fastify')
 const fastifyAuth = require('../auth')
 
-test('registering plugin with invalid default relation', async (t) => {
+test('registering plugin with invalid default relation', (t, done) => {
   t.plan(2)
 
   const fastify = Fastify()
   fastify.register(fastifyAuth, { defaultRelation: 'auth' })
 
   fastify.ready((err) => {
-    t.ok(err)
-    t.equal(err.message, 'The value of default relation should be one of [\'or\', \'and\']')
+    t.assert.ok(err)
+    t.assert.strictEqual(err.message, 'The value of default relation should be one of [\'or\', \'and\']')
+    done()
   })
 })
 
-test('Clean status code through auth pipeline', t => {
+test('Clean status code through auth pipeline', (t, done) => {
   t.plan(3)
 
   const app = Fastify()
@@ -33,9 +34,10 @@ test('Clean status code through auth pipeline', t => {
       name: 'two'
     }
   }, (err, res) => {
-    t.error(err)
-    t.equal(res.payload, '42')
-    t.equal(res.statusCode, 200)
+    t.assert.ifError(err)
+    t.assert.strictEqual(res.payload, '42')
+    t.assert.strictEqual(res.statusCode, 200)
+    done()
   })
 })
 
@@ -68,7 +70,7 @@ test('defaultRelation: used when relation not specified', async (t) => {
     method: 'GET',
     url: '/welcome'
   })
-  t.equal(response.statusCode, 502)
+  t.assert.strictEqual(response.statusCode, 502)
 
   const res = await app.inject({
     method: 'GET',
@@ -77,10 +79,10 @@ test('defaultRelation: used when relation not specified', async (t) => {
       name: 'two'
     }
   })
-  t.equal(res.statusCode, 200)
+  t.assert.strictEqual(res.statusCode, 200)
 })
 
-test('Options: non-array functions input', t => {
+test('Options: non-array functions input', (t, done) => {
   t.plan(4)
 
   const app = Fastify()
@@ -89,8 +91,8 @@ test('Options: non-array functions input', t => {
       app.addHook('preHandler', app.auth('bogus'))
       app.get('/', (req, res) => res.send(42))
     } catch (error) {
-      t.ok(error)
-      t.equal(error.message, 'You must give an array of functions to the auth function')
+      t.assert.ok(error)
+      t.assert.strictEqual(error.message, 'You must give an array of functions to the auth function')
     }
   })
 
@@ -98,12 +100,13 @@ test('Options: non-array functions input', t => {
     method: 'GET',
     url: '/'
   }, (err, res) => {
-    t.error(err)
-    t.equal(res.statusCode, 404)
+    t.assert.ifError(err)
+    t.assert.strictEqual(res.statusCode, 404)
+    done()
   })
 })
 
-test('Options: empty array functions input', t => {
+test('Options: empty array functions input', (t, done) => {
   t.plan(4)
 
   const app = Fastify()
@@ -112,8 +115,8 @@ test('Options: empty array functions input', t => {
       app.addHook('preHandler', app.auth([]))
       app.get('/', (req, res) => res.send(42))
     } catch (error) {
-      t.ok(error)
-      t.equal(error.message, 'Missing auth functions')
+      t.assert.ok(error)
+      t.assert.strictEqual(error.message, 'Missing auth functions')
     }
   })
 
@@ -121,12 +124,13 @@ test('Options: empty array functions input', t => {
     method: 'GET',
     url: '/'
   }, (err, res) => {
-    t.error(err)
-    t.equal(res.statusCode, 404)
+    t.assert.ifError(err)
+    t.assert.strictEqual(res.statusCode, 404)
+    done()
   })
 })
 
-test('Options: faulty relation', t => {
+test('Options: faulty relation', (t, done) => {
   t.plan(4)
 
   const app = Fastify()
@@ -135,8 +139,8 @@ test('Options: faulty relation', t => {
       app.addHook('preHandler', app.auth([successWithCode('one', 201)], { relation: 'foo' }))
       app.get('/', (req, res) => res.send(42))
     } catch (error) {
-      t.ok(error)
-      t.equal(error.message, 'The value of options.relation should be one of [\'or\', \'and\']')
+      t.assert.ok(error)
+      t.assert.strictEqual(error.message, 'The value of options.relation should be one of [\'or\', \'and\']')
     }
   })
 
@@ -144,12 +148,13 @@ test('Options: faulty relation', t => {
     method: 'GET',
     url: '/'
   }, (err, res) => {
-    t.error(err)
-    t.equal(res.statusCode, 404)
+    t.assert.ifError(err)
+    t.assert.strictEqual(res.statusCode, 404)
+    done()
   })
 })
 
-test('Options: faulty run', t => {
+test('Options: faulty run', (t, done) => {
   t.plan(4)
 
   const app = Fastify()
@@ -158,8 +163,8 @@ test('Options: faulty run', t => {
       app.addHook('preHandler', app.auth([successWithCode('one', 201)], { run: 'foo' }))
       app.get('/', (req, res) => res.send(42))
     } catch (error) {
-      t.ok(error)
-      t.equal(error.message, 'The value of options.run must be \'all\'')
+      t.assert.ok(error)
+      t.assert.strictEqual(error.message, 'The value of options.run must be \'all\'')
     }
   })
 
@@ -167,12 +172,13 @@ test('Options: faulty run', t => {
     method: 'GET',
     url: '/'
   }, (err, res) => {
-    t.error(err)
-    t.equal(res.statusCode, 404)
+    t.assert.ifError(err)
+    t.assert.strictEqual(res.statusCode, 404)
+    done()
   })
 })
 
-test('Avoid status code overwriting', t => {
+test('Avoid status code overwriting', (t, done) => {
   t.plan(3)
 
   const app = Fastify()
@@ -189,13 +195,14 @@ test('Avoid status code overwriting', t => {
       name: 'two'
     }
   }, (err, res) => {
-    t.error(err)
-    t.equal(res.payload, '42')
-    t.equal(res.statusCode, 202)
+    t.assert.ifError(err)
+    t.assert.strictEqual(res.payload, '42')
+    t.assert.strictEqual(res.statusCode, 202)
+    done()
   })
 })
 
-test('Last win when all failures', t => {
+test('Last win when all failures', (t, done) => {
   t.plan(2)
 
   const app = Fastify()
@@ -212,12 +219,13 @@ test('Last win when all failures', t => {
       name: 'three'
     }
   }, (err, res) => {
-    t.error(err)
-    t.equal(res.statusCode, 502)
+    t.assert.ifError(err)
+    t.assert.strictEqual(res.statusCode, 502)
+    done()
   })
 })
 
-test('First success win', t => {
+test('First success win', (t, done) => {
   t.plan(2)
 
   const app = Fastify()
@@ -234,8 +242,9 @@ test('First success win', t => {
       name: 'two'
     }
   }, (err, res) => {
-    t.error(err)
-    t.equal(res.statusCode, 202)
+    t.assert.ifError(err)
+    t.assert.strictEqual(res.statusCode, 202)
+    done()
   })
 })
 
