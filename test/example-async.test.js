@@ -70,7 +70,7 @@ test('Register user', (t, done) => {
   })
 })
 
-test('Auth succesful', (t, done) => {
+test('Auth successful', (t, done) => {
   t.plan(2)
 
   fastify.inject({
