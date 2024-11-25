@@ -1,7 +1,7 @@
 'use strict'
 
 const { test } = require('node:test')
-const build = require('../examples/example-composited')
+const build = require('./example-composited')
 
 let fastify = null
 

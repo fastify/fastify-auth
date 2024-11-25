@@ -164,15 +164,4 @@ function build (opts) {
   return fastify
 }
 
-if (require.main === module) {
-  const fastify = build({
-    logger: {
-      level: 'info'
-    }
-  })
-  fastify.listen({ port: 3000 }, err => {
-    if (err) throw err
-  })
-}
-
 module.exports = build

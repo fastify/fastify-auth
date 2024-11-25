@@ -2,7 +2,7 @@
 
 const { test } = require('node:test')
 const { rimrafSync } = require('rimraf')
-const build = require('../examples/example')
+const build = require('./example')
 
 let fastify = null
 let token = null
