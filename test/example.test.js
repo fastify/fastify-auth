@@ -1,37 +1,37 @@
 'use strict'
 
-const t = require('tap')
-const test = t.test
+const { test } = require('node:test')
 const { rimrafSync } = require('rimraf')
 const build = require('./example')
 
 let fastify = null
 let token = null
 
-t.before(() => {
+test.before(() => {
   rimrafSync('./authdb')
   fastify = build()
 })
 
-t.teardown(async () => {
+test.after(async () => {
   await fastify.close()
   rimrafSync('./authdb')
 })
 
-test('Route without auth', t => {
+test('Route without auth', (t, done) => {
   t.plan(2)
 
   fastify.inject({
     method: 'GET',
     url: '/no-auth'
   }, (err, res) => {
-    t.error(err)
+    t.assert.ifError(err)
     const payload = JSON.parse(res.payload)
-    t.same(payload, { hello: 'world' })
+    t.assert.deepStrictEqual(payload, { hello: 'world' })
+    done()
   })
 })
 
-test('Missing header', t => {
+test('Missing header', (t, done) => {
   t.plan(2)
 
   fastify.inject({
@@ -39,17 +39,18 @@ test('Missing header', t => {
     url: '/auth',
     headers: {}
   }, (err, res) => {
-    t.error(err)
+    t.assert.ifError(err)
     const payload = JSON.parse(res.payload)
-    t.same(payload, {
+    t.assert.deepStrictEqual(payload, {
       error: 'Unauthorized',
       message: 'Missing token header',
       statusCode: 401
     })
+    done()
   })
 })
 
-test('Register user', t => {
+test('Register user', (t, done) => {
   t.plan(3)
 
   fastify.inject({
@@ -60,15 +61,16 @@ test('Register user', t => {
       password: 'a-very-secure-one'
     }
   }, (err, res) => {
-    t.error(err)
+    t.assert.ifError(err)
     const payload = JSON.parse(res.payload)
-    t.equal(res.statusCode, 200)
+    t.assert.strictEqual(res.statusCode, 200)
     token = payload.token
-    t.equal(typeof payload.token, 'string')
+    t.assert.strictEqual(typeof payload.token, 'string')
+    done()
   })
 })
 
-test('Auth successful', t => {
+test('Auth successful', (t, done) => {
   t.plan(2)
 
   fastify.inject({
@@ -78,13 +80,14 @@ test('Auth successful', t => {
       auth: token
     }
   }, (err, res) => {
-    t.error(err)
+    t.assert.ifError(err)
     const payload = JSON.parse(res.payload)
-    t.same(payload, { hello: 'world' })
+    t.assert.deepStrictEqual(payload, { hello: 'world' })
+    done()
   })
 })
 
-test('Auth not successful', t => {
+test('Auth not successful', (t, done) => {
   t.plan(2)
 
   fastify.inject({
@@ -94,18 +97,19 @@ test('Auth not successful', t => {
       auth: 'the winter is coming'
     }
   }, (err, res) => {
-    t.error(err)
+    t.assert.ifError(err)
     const payload = JSON.parse(res.payload)
-    t.same(payload, {
+    t.assert.deepStrictEqual(payload, {
       code: 'FAST_JWT_MALFORMED',
       error: 'Unauthorized',
       message: 'The token is malformed.',
       statusCode: 401
     })
+    done()
   })
 })
 
-test('Auth successful (multiple)', t => {
+test('Auth successful (multiple)', (t, done) => {
   t.plan(2)
 
   fastify.inject({
@@ -116,13 +120,14 @@ test('Auth successful (multiple)', t => {
       password: 'a-very-secure-one'
     }
   }, (err, res) => {
-    t.error(err)
+    t.assert.ifError(err)
     const payload = JSON.parse(res.payload)
-    t.same(payload, { hello: 'world' })
+    t.assert.deepStrictEqual(payload, { hello: 'world' })
+    done()
   })
 })
 
-test('Auth not successful (multiple)', t => {
+test('Auth not successful (multiple)', (t, done) => {
   t.plan(2)
 
   fastify.inject({
@@ -133,17 +138,18 @@ test('Auth not successful (multiple)', t => {
       password: 'wrong!'
     }
   }, (err, res) => {
-    t.error(err)
+    t.assert.ifError(err)
     const payload = JSON.parse(res.payload)
-    t.same(payload, {
+    t.assert.deepStrictEqual(payload, {
       error: 'Unauthorized',
       message: 'Password not valid',
       statusCode: 401
     })
+    done()
   })
 })
 
-test('Failure with missing user', t => {
+test('Failure with missing user', (t, done) => {
   t.plan(2)
 
   fastify.inject({
@@ -153,17 +159,18 @@ test('Failure with missing user', t => {
       password: 'wrong!'
     }
   }, (err, res) => {
-    t.error(err)
+    t.assert.ifError(err)
     const payload = JSON.parse(res.payload)
-    t.same(payload, {
+    t.assert.deepStrictEqual(payload, {
       error: 'Unauthorized',
       message: 'Missing user in request body',
       statusCode: 401
     })
+    done()
   })
 })
 
-test('Failure with explicit reply', t => {
+test('Failure with explicit reply', (t, done) => {
   t.plan(3)
 
   fastify.inject({
@@ -175,9 +182,10 @@ test('Failure with explicit reply', t => {
       password: 'wrong!'
     }
   }, (err, res) => {
-    t.error(err)
+    t.assert.ifError(err)
     const payload = JSON.parse(res.payload)
-    t.equal(res.statusCode, 401)
-    t.same(payload, { error: 'Unauthorized' })
+    t.assert.strictEqual(res.statusCode, 401)
+    t.assert.deepStrictEqual(payload, { error: 'Unauthorized' })
+    done()
   })
 })

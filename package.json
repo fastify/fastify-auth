@@ -19,7 +19,7 @@
     "lint:fix": "standard --fix",
     "test": "npm run test:unit && npm run test:typescript",
     "test:typescript": "tsd",
-    "test:unit": "tap"
+    "test:unit": "c8 --100 node --test"
   },
   "keywords": [
     "fastify",
@@ -41,10 +41,10 @@
     "@fastify/type-provider-json-schema-to-ts": "^4.0.0",
     "@fastify/type-provider-typebox": "^5.0.0",
     "@types/node": "^22.0.0",
+    "c8": "^10.1.2",
     "fastify": "^5.0.0",
     "rimraf": "^6.0.1",
     "standard": "^17.1.0",
-    "tap": "^18.7.1",
     "tsd": "^0.31.1"
   },
   "dependencies": {
