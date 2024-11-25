@@ -87,7 +87,7 @@ test('Auth successful', (t, done) => {
   })
 })
 
-test('Auth succesful (multiple)', (t, done) => {
+test('Auth successful (multiple)', (t, done) => {
   t.plan(2)
 
   fastify.inject({
