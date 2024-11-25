@@ -53,11 +53,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "c8": {
-    "exclude": [
-      "**/examples/*",
-      "**/*.test.js"
-    ]
   }
 }
