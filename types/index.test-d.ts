@@ -88,6 +88,7 @@ export const usersMutationAccessPolicy =
       throw new Error(request.params.userId)
     }
 
+// @ts-expect-error
 async function usersController (fastify: FastifyInstance): Promise<void> {
   fastify.patch<{
     Params: { userId: string };
