@@ -104,6 +104,7 @@ async function usersController (fastify: FastifyInstance): Promise<void> {
   )
 }
 
+// @ts-expect-error
 async function usersControllerV2 (fastify: FastifyInstance): Promise<void> {
   fastify.patch<{
     Params: { userId: string };
