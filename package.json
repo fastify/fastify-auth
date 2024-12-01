@@ -10,6 +10,16 @@
     "url": "https://github.com/fastify/fastify-auth/issues"
   },
   "homepage": "https://github.com/fastify/fastify-auth#readme",
+  "funding": [
+    {
+      "type": "github",
+      "url": "https://github.com/sponsors/fastify"
+    },
+    {
+      "type": "opencollective",
+      "url": "https://opencollective.com/fastify"
+    }
+  ],
   "main": "auth.js",
   "type": "commonjs",
   "types": "types/index.d.ts",
@@ -31,6 +41,11 @@
     {
       "name": "Matteo Collina",
       "email": "hello@matteocollina.com"
+    },
+    {
+      "name": "Frazer Smith",
+      "email": "frazer.dev@icloud.com",
+      "url": "https://github.com/fdawgs"
     }
   ],
   "license": "MIT",
