@@ -12,6 +12,20 @@ Check out a complete example [here](test/example.js).
 npm i @fastify/auth
 ```
 
+### Compatibility
+| Plugin version | Fastify version |
+| ---------------|-----------------|
+| `^5.x`         | `^5.x`          |
+| `^3.x`         | `^4.x`          |
+| `^1.x`         | `^3.x`          |
+| `^0.x`         | `^2.x`          |
+| `^0.x`         | `^1.x`          |
+
+
+Please note that if a Fastify version is out of support, then so are the corresponding version(s) of this plugin
+in the table above.
+See [Fastify's LTS policy](https://github.com/fastify/fastify/blob/main/docs/Reference/LTS.md) for more details.
+
 ## Usage
 As said above, `@fastify/auth` does not provide an authentication strategy, so you must provide authentication strategies yourself, with a decorator or another plugin.
 
