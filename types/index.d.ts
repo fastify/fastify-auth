@@ -7,7 +7,7 @@ import {
   FastifySchema,
   RouteGenericInterface,
   preHandlerHookHandler
-} from 'fastify';
+} from 'fastify'
 
 declare module 'fastify' {
   interface FastifyInstance<RawServer, RawRequest, RawReply, Logger, TypeProvider> {
@@ -37,7 +37,7 @@ declare namespace fastifyAuth {
     request: Request,
     reply: Reply,
     done: (error?: Error) => void
-  ) => void;
+  ) => void
 
   /**
    * @link [`fastify-auth` options documentation](https://github.com/fastify/fastify-auth#options)
@@ -55,5 +55,5 @@ declare namespace fastifyAuth {
   export { fastifyAuth as default }
 }
 
-declare function fastifyAuth(...params: Parameters<FastifyAuth>): ReturnType<FastifyAuth>
+declare function fastifyAuth (...params: Parameters<FastifyAuth>): ReturnType<FastifyAuth>
 export = fastifyAuth

@@ -25,8 +25,8 @@
   "types": "types/index.d.ts",
   "scripts": {
     "clean": "rimraf authdb",
-    "lint": "standard",
-    "lint:fix": "standard --fix",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
     "test": "npm run test:unit && npm run test:typescript",
     "test:typescript": "tsd",
     "test:unit": "c8 --100 node --test"
@@ -66,8 +66,8 @@
     "@types/node": "^22.0.0",
     "c8": "^10.1.2",
     "fastify": "^5.0.0",
+    "neostandard": "^0.11.9",
     "rimraf": "^6.0.1",
-    "standard": "^17.1.0",
     "tsd": "^0.31.1"
   },
   "dependencies": {
