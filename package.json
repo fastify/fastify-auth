@@ -1,6 +1,6 @@
 {
   "name": "@fastify/auth",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "description": "Run multiple auth functions in Fastify",
   "repository": {
     "type": "git",
