@@ -1,45 +1,45 @@
-import fastify, { FastifyInstance, FastifyReply, FastifyRequest, preHandlerHookHandler } from 'fastify';
+import fastify, { FastifyInstance, FastifyReply, FastifyRequest, preHandlerHookHandler } from 'fastify'
 import fastifyAuth from '..'
-import { expectType } from 'tsd';
+import { expectType } from 'tsd'
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 import { JsonSchemaToTsProvider } from '@fastify/type-provider-json-schema-to-ts'
 
-const app = fastify();
+const app = fastify()
 
 type Done = (error?: Error) => void
 
-app.register(fastifyAuth).after((err) => {
+app.register(fastifyAuth).after((_err) => {
   app.auth([
     (request, reply, done) => {
-			expectType<FastifyRequest>(request)
-			expectType<FastifyReply>(reply)
-			expectType<Done>(done)
+      expectType<FastifyRequest>(request)
+      expectType<FastifyReply>(reply)
+      expectType<Done>(done)
     },
-  ], {relation: 'or'});
+  ], { relation: 'or' })
   app.auth([
     (request, reply, done) => {
-			expectType<FastifyRequest>(request)
-			expectType<FastifyReply>(reply)
-			expectType<Done>(done)
+      expectType<FastifyRequest>(request)
+      expectType<FastifyReply>(reply)
+      expectType<Done>(done)
     },
-  ], {run: 'all'});
+  ], { run: 'all' })
   app.auth([
     (request, reply, done) => {
-			expectType<FastifyRequest>(request)
-			expectType<FastifyReply>(reply)
-			expectType<Done>(done)
+      expectType<FastifyRequest>(request)
+      expectType<FastifyReply>(reply)
+      expectType<Done>(done)
     },
-  ]);
+  ])
   app.auth([
     function (request, reply, done) {
       expectType<FastifyInstance>(this)
     },
-  ]);
-  const auth = app.auth([(request, reply, done) => {}]);
-  expectType<preHandlerHookHandler>(auth);
-  app.get('/secret', {preHandler: auth}, (request, reply) => {});
-  app.get('/private', {preHandler: [auth]}, (request, reply) => {});
-});
+  ])
+  const auth = app.auth([(request, reply, done) => {}])
+  expectType<preHandlerHookHandler>(auth)
+  app.get('/secret', { preHandler: auth }, (request, reply) => {})
+  app.get('/private', { preHandler: [auth] }, (request, reply) => {})
+})
 
 const typebox = fastify().withTypeProvider<TypeBoxTypeProvider>()
 typebox.register(fastifyAuth)
@@ -59,9 +59,9 @@ jsonSchemaToTS.route({
   handler: () => {}
 })
 
-declare module "fastify" {
+declare module 'fastify' {
   interface FastifyRequest {
-    identity: {actorId: string};
+    identity: { actorId: string };
   }
 
   interface FastifyInstance {
@@ -74,44 +74,46 @@ export const usersMutationAccessPolicy =
     async (
       request: FastifyRequest<{
         Params: { userId: string }
-      }>,
+      }>
     ): Promise<void> => {
-      const { actorId } = request.identity;
-      const isOwner = actorId === request.params.userId;
+      const { actorId } = request.identity
+      const isOwner = actorId === request.params.userId
 
       if (isOwner) {
-        return;
+        return
       }
 
-      fastify.log.warn("Actor should not be able to see this route");
+      fastify.log.warn('Actor should not be able to see this route')
 
-      throw new Error(request.params.userId);
-    };
+      throw new Error(request.params.userId)
+    }
 
-async function usersController(fastify: FastifyInstance): Promise<void> {
+async function usersController (fastify: FastifyInstance): Promise<void> {
   fastify.patch<{
     Params: { userId: string };
     Body: { name: string };
   }>(
-    "/:userId",
+    '/:userId',
     {
       onRequest: fastify.auth([
         usersMutationAccessPolicy(fastify),
       ]),
     },
-    async (req, res) => ({ success: true }),
-  );
+    async (req, res) => ({ success: true })
+  )
 }
+await usersController(app)
 
-async function usersControllerV2(fastify: FastifyInstance): Promise<void> {
+async function usersControllerV2 (fastify: FastifyInstance): Promise<void> {
   fastify.patch<{
     Params: { userId: string };
     Body: { name: string };
   }>(
-    "/:userId",
+    '/:userId',
     {
       onRequest: usersMutationAccessPolicy(fastify),
     },
-    async (req, res) => ({ success: true }),
-  );
+    async (req, res) => ({ success: true })
+  )
 }
+await usersControllerV2(app)
