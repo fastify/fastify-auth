@@ -8,7 +8,7 @@ const app = fastify()
 
 type Done = (error?: Error) => void
 
-app.register(fastifyAuth).after((err) => {
+app.register(fastifyAuth).after((_err) => {
   app.auth([
     (request, reply, done) => {
       expectType<FastifyRequest>(request)
@@ -88,7 +88,6 @@ export const usersMutationAccessPolicy =
       throw new Error(request.params.userId)
     }
 
-// @ts-expect-error
 async function usersController (fastify: FastifyInstance): Promise<void> {
   fastify.patch<{
     Params: { userId: string };
@@ -103,8 +102,8 @@ async function usersController (fastify: FastifyInstance): Promise<void> {
     async (req, res) => ({ success: true })
   )
 }
+await usersController(app)
 
-// @ts-expect-error
 async function usersControllerV2 (fastify: FastifyInstance): Promise<void> {
   fastify.patch<{
     Params: { userId: string };
@@ -117,3 +116,4 @@ async function usersControllerV2 (fastify: FastifyInstance): Promise<void> {
     async (req, res) => ({ success: true })
   )
 }
+await usersControllerV2(app)
