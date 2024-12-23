@@ -61,7 +61,7 @@
     "@fastify/jwt": "^9.0.0",
     "@fastify/leveldb": "^6.0.0",
     "@fastify/pre-commit": "^2.1.0",
-    "@fastify/type-provider-json-schema-to-ts": "^4.0.0",
+    "@fastify/type-provider-json-schema-to-ts": "^5.0.0",
     "@fastify/type-provider-typebox": "^5.0.0",
     "@types/node": "^22.0.0",
     "c8": "^10.1.2",
