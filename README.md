@@ -29,7 +29,7 @@ See [Fastify's LTS policy](https://github.com/fastify/fastify/blob/main/docs/Ref
 ## Usage
 As said above, `@fastify/auth` does not provide an authentication strategy, so you must provide authentication strategies yourself, with a decorator or another plugin.
 
-In the following example, you will find a very simple implementation that should help you understand how to use this module:
+In the following example, you will find a straightforward implementation that should help you understand how to use this module:
 ```js
 fastify
   .decorate('verifyJWTandLevel', function (request, reply, done) {
@@ -138,7 +138,7 @@ fastify.register(require('@fastify/auth'), { defaultRelation: 'and'} )
 
 _For more examples, please check [`example-composited.js`](test/example-composited.js)_
 
-This plugin support `callback` and `Promise` returned by the functions. Note that an `async` function **does not have** to call the `done` parameter, otherwise the route handler to which the auth methods are linked to [might be called multiple times](https://fastify.dev/docs/latest/Reference/Hooks/#respond-to-a-request-from-a-hook):
+This plugin supports `callback`s and `Promise`s returned by functions. Note that an `async` function **does not have** to call the `done` parameter, otherwise, the route handler to which the auth methods are linked to [might be called multiple times](https://fastify.dev/docs/latest/Reference/Hooks/#respond-to-a-request-from-a-hook):
 ```js
 fastify
   .decorate('asyncVerifyJWTandLevel', async function (request, reply) {
@@ -171,8 +171,8 @@ fastify
 Keep in mind that route definition should either be done as [a plugin](https://github.com/fastify/fastify/blob/master/docs/Reference/Plugins.md) or within an `.after()` callback.
 For a complete example implementation, see [example.js](test/example.js).
 
-`@fastify/auth` will run all your authentication methods and your request will continue if at least one succeeds, otherwise it will return an error to the client.
-Any successful authentication will automatically stop `@fastify/auth` from trying the rest, unless you provide the `run: 'all'` parameter:
+`@fastify/auth` will run all your authentication methods and your request will continue if at least one succeeds, otherwise, it will return an error to the client.
+Any successful authentication will automatically stop `@fastify/auth` from trying the rest unless you provide the `run: 'all'` parameter:
 ```js
 fastify.route({
   method: 'GET',
@@ -191,7 +191,7 @@ This example will show all the console logs and will reply always with `401: you
 The `run` parameter is useful if you are adding to the request business data read from auth-tokens.
 
 
-You can use this plugin on route level as in the above example or on hook level by using the `preHandler` hook:
+You can use this plugin at the route level as in the above example or at the hook level by using the `preHandler` hook:
 ```js
 fastify.addHook('preHandler', fastify.auth([
   fastify.verifyJWTandLevel,
@@ -220,7 +220,7 @@ Using the `@fastify/auth` plugin in the `preHandler` hook can result in unnecess
 
 For authentication methods that do require the request body, such as sending a token in the body, you must use the `preHandler` hook.
 
-In mixed cases you must use the `preHandler` hook.
+In mixed cases, you must use the `preHandler` hook.
 
 ## API
 
@@ -236,7 +236,7 @@ In mixed cases you must use the `preHandler` hook.
 
 + `defaultRelation` (Default: `or`): The default relation between the functions. It can be either `or` or `and`.
 
-## Acknowledgements
+## Acknowledgments
 
 This project is kindly sponsored by:
 - [LetzDoIt](https://www.letzdoitapp.com/)
