@@ -17,7 +17,7 @@ function build (opts) {
     const jwt = this.jwt
     const level = this.level['authdb-async']
 
-    if (request.body && request.body.failureWithReply) {
+    if (request.body?.failureWithReply) {
       reply.code(401).send({ error: 'Unauthorized' })
       return Promise.reject(new Error())
     }
@@ -44,7 +44,7 @@ function build (opts) {
     })
   }
 
-  function verifyUserAndPassword (request, reply, done) {
+  function verifyUserAndPassword (request, _reply, done) {
     const level = this.level['authdb-async']
 
     level.get(request.body.user, onUser)

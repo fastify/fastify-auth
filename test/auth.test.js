@@ -24,7 +24,7 @@ test('Clean status code through auth pipeline', (t, done) => {
   app.register(fastifyAuth)
     .after(() => {
       app.addHook('preHandler', app.auth([failWithCode('one', 501), failWithCode('two', 502)]))
-      app.get('/', (req, res) => res.send(42))
+      app.get('/', (_req, res) => res.send(42))
     })
 
   app.inject({
@@ -51,7 +51,7 @@ test('defaultRelation: used when relation not specified', async (t) => {
     method: 'GET',
     url: '/welcome',
     preHandler: app.auth([successWithCode('one', 200), failWithCode('two', 502)]),
-    handler: async (req, reply) => {
+    handler: async (_req, reply) => {
       console.log('fawzihandler1')
       await reply.send({ hello: 'welcome' })
     }
@@ -61,7 +61,7 @@ test('defaultRelation: used when relation not specified', async (t) => {
     method: 'GET',
     url: '/bye',
     preHandler: app.auth([failWithCode('one', 503), successWithCode('two', 200)], { relation: 'or' }),
-    handler: (req, reply) => {
+    handler: (_req, reply) => {
       reply.send({ hello: 'bye' })
     }
   })
@@ -89,7 +89,7 @@ test('Options: non-array functions input', (t, done) => {
   app.register(fastifyAuth).after(() => {
     try {
       app.addHook('preHandler', app.auth('bogus'))
-      app.get('/', (req, res) => res.send(42))
+      app.get('/', (_req, res) => res.send(42))
     } catch (error) {
       t.assert.ok(error)
       t.assert.strictEqual(error.message, 'You must give an array of functions to the auth function')
@@ -113,7 +113,7 @@ test('Options: empty array functions input', (t, done) => {
   app.register(fastifyAuth).after(() => {
     try {
       app.addHook('preHandler', app.auth([]))
-      app.get('/', (req, res) => res.send(42))
+      app.get('/', (_req, res) => res.send(42))
     } catch (error) {
       t.assert.ok(error)
       t.assert.strictEqual(error.message, 'Missing auth functions')
@@ -137,7 +137,7 @@ test('Options: faulty relation', (t, done) => {
   app.register(fastifyAuth).after(() => {
     try {
       app.addHook('preHandler', app.auth([successWithCode('one', 201)], { relation: 'foo' }))
-      app.get('/', (req, res) => res.send(42))
+      app.get('/', (_req, res) => res.send(42))
     } catch (error) {
       t.assert.ok(error)
       t.assert.strictEqual(error.message, 'The value of options.relation should be one of [\'or\', \'and\']')
@@ -161,7 +161,7 @@ test('Options: faulty run', (t, done) => {
   app.register(fastifyAuth).after(() => {
     try {
       app.addHook('preHandler', app.auth([successWithCode('one', 201)], { run: 'foo' }))
-      app.get('/', (req, res) => res.send(42))
+      app.get('/', (_req, res) => res.send(42))
     } catch (error) {
       t.assert.ok(error)
       t.assert.strictEqual(error.message, 'The value of options.run must be \'all\'')
@@ -185,7 +185,7 @@ test('Avoid status code overwriting', (t, done) => {
   app.register(fastifyAuth)
     .after(() => {
       app.addHook('preHandler', app.auth([successWithCode('one', 201), successWithCode('two', 202)]))
-      app.get('/', (req, res) => res.send(42))
+      app.get('/', (_req, res) => res.send(42))
     })
 
   app.inject({
@@ -209,7 +209,7 @@ test('Last win when all failures', (t, done) => {
   app.register(fastifyAuth)
     .after(() => {
       app.addHook('preHandler', app.auth([failWithCode('one', 501), failWithCode('two', 502)]))
-      app.get('/', (req, res) => res.send(42))
+      app.get('/', (_req, res) => res.send(42))
     })
 
   app.inject({
@@ -232,7 +232,7 @@ test('First success win', (t, done) => {
   app.register(fastifyAuth)
     .after(() => {
       app.addHook('preHandler', app.auth([successWithCode('one', 201), successWithCode('two', 202)]))
-      app.get('/', (req, res) => res.send(42))
+      app.get('/', (_req, res) => res.send(42))
     })
 
   app.inject({
