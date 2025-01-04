@@ -660,13 +660,13 @@ test('Check run all line fail with AND', (t, done) => {
       method: 'GET',
       url: '/run-all-pipe',
       preHandler: fastify.auth([
-        (request, reply, done) => { t.assert.ok('executed 1'); done() },
-        (request, reply, done) => { t.assert.ok('executed 2'); done(new Error('second')) },
-        (request, reply, done) => { t.assert.ok('executed 3'); done() },
-        (request, reply, done) => { t.assert.ok('executed 4'); done() },
-        (request, reply, done) => { t.assert.ok('executed 5'); done(new Error('fifth')) }
+        (_request, _reply, done) => { t.assert.ok('executed 1'); done() },
+        (_request, _reply, done) => { t.assert.ok('executed 2'); done(new Error('second')) },
+        (_request, _reply, done) => { t.assert.ok('executed 3'); done() },
+        (_request, _reply, done) => { t.assert.ok('executed 4'); done() },
+        (_request, _reply, done) => { t.assert.ok('executed 5'); done(new Error('fifth')) }
       ], { relation: 'and', run: 'all' }),
-      handler: (req, reply) => { reply.send({ hello: 'world' }) }
+      handler: (_req, reply) => { reply.send({ hello: 'world' }) }
     })
   })
 
@@ -693,13 +693,13 @@ test('Check run all line with AND', (t, done) => {
       method: 'GET',
       url: '/run-all-pipe',
       preHandler: fastify.auth([
-        (request, reply, done) => { t.assert.ok('executed 1'); done() },
-        (request, reply, done) => { t.assert.ok('executed 2'); done() },
-        (request, reply, done) => { t.assert.ok('executed 3'); done() },
-        (request, reply, done) => { t.assert.ok('executed 4'); done() },
-        (request, reply, done) => { t.assert.ok('executed 5'); done() }
+        (_request, _reply, done) => { t.assert.ok('executed 1'); done() },
+        (_request, _reply, done) => { t.assert.ok('executed 2'); done() },
+        (_request, _reply, done) => { t.assert.ok('executed 3'); done() },
+        (_request, _reply, done) => { t.assert.ok('executed 4'); done() },
+        (_request, _reply, done) => { t.assert.ok('executed 5'); done() }
       ], { relation: 'and', run: 'all' }),
-      handler: (req, reply) => { reply.send({ hello: 'world' }) }
+      handler: (_req, reply) => { reply.send({ hello: 'world' }) }
     })
   })
 
@@ -722,13 +722,13 @@ test('Check run all line with OR', (t, done) => {
       method: 'GET',
       url: '/run-all-pipe',
       preHandler: fastify.auth([
-        (req, reply, done) => { t.assert.ok('executed 1'); done(new Error('primo')) },
-        (req, reply, done) => { t.assert.ok('executed 2'); done(new Error('secondo')) },
-        (req, reply, done) => { t.assert.ok('executed 3'); done() },
-        (req, reply, done) => { t.assert.ok('executed 4'); done(new Error('quarto')) },
-        (req, reply, done) => { t.assert.ok('executed 5'); done() }
+        (_req, _reply, done) => { t.assert.ok('executed 1'); done(new Error('primo')) },
+        (_req, _reply, done) => { t.assert.ok('executed 2'); done(new Error('secondo')) },
+        (_req, _reply, done) => { t.assert.ok('executed 3'); done() },
+        (_req, _reply, done) => { t.assert.ok('executed 4'); done(new Error('quarto')) },
+        (_req, _reply, done) => { t.assert.ok('executed 5'); done() }
       ], { relation: 'or', run: 'all' }),
-      handler: (req, reply) => { reply.send({ hello: 'world' }) }
+      handler: (_req, reply) => { reply.send({ hello: 'world' }) }
     })
   })
 
@@ -751,13 +751,13 @@ test('Check run all fail line with OR', (t, done) => {
       method: 'GET',
       url: '/run-all-pipe',
       preHandler: fastify.auth([
-        (req, reply, done) => { t.assert.ok('executed 1'); done(new Error('primo')) },
-        (req, reply, done) => { t.assert.ok('executed 2'); done(new Error('secondo')) },
-        (req, reply, done) => { t.assert.ok('executed 3'); done(new Error('terzo')) },
-        (req, reply, done) => { t.assert.ok('executed 4'); done(new Error('quarto')) },
-        (req, reply, done) => { t.assert.ok('executed 5'); done(new Error('quinto')) }
+        (_req, _reply, done) => { t.assert.ok('executed 1'); done(new Error('primo')) },
+        (_req, _reply, done) => { t.assert.ok('executed 2'); done(new Error('secondo')) },
+        (_req, _reply, done) => { t.assert.ok('executed 3'); done(new Error('terzo')) },
+        (_req, _reply, done) => { t.assert.ok('executed 4'); done(new Error('quarto')) },
+        (_req, _reply, done) => { t.assert.ok('executed 5'); done(new Error('quinto')) }
       ], { relation: 'or', run: 'all' }),
-      handler: (req, reply) => { reply.send({ hello: 'world' }) }
+      handler: (_req, reply) => { reply.send({ hello: 'world' }) }
     })
   })
 
@@ -784,10 +784,10 @@ test('Ignore last status', (t, done) => {
       method: 'GET',
       url: '/run-all-status',
       preHandler: fastify.auth([
-        (req, reply, done) => { t.assert.ok('executed 1'); done() },
-        (req, reply, done) => { t.assert.ok('executed 2'); done(new Error('last')) }
+        (_req, _reply, done) => { t.assert.ok('executed 1'); done() },
+        (_req, _reply, done) => { t.assert.ok('executed 2'); done(new Error('last')) }
       ], { relation: 'or', run: 'all' }),
-      handler: (req, reply) => { reply.send({ hello: 'world' }) }
+      handler: (_req, reply) => { reply.send({ hello: 'world' }) }
     })
   })
 
@@ -883,10 +883,10 @@ test('Clean status code settle by user', (t, done) => {
       method: 'GET',
       url: '/run-all-status',
       preHandler: fastify.auth([
-        (req, reply, done) => { t.assert.ok('executed 1'); done() },
-        (req, reply, done) => { t.assert.ok('executed 2'); reply.code(400); done(new Error('last')) }
+        (_req, _reply, done) => { t.assert.ok('executed 1'); done() },
+        (_req, reply, done) => { t.assert.ok('executed 2'); reply.code(400); done(new Error('last')) }
       ], { relation: 'or', run: 'all' }),
-      handler: (req, reply) => { reply.send({ hello: 'world' }) }
+      handler: (_req, reply) => { reply.send({ hello: 'world' }) }
     })
   })
 

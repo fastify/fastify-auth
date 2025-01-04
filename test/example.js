@@ -71,7 +71,7 @@ function build (opts) {
     }
   }
 
-  function verifyUserAndPassword (request, reply, done) {
+  function verifyUserAndPassword (request, _reply, done) {
     const level = this.level.authdb
 
     if (!request.body || !request.body.user) {

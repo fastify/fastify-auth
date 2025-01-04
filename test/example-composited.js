@@ -15,7 +15,7 @@ function build (opts) {
   fastify.decorate('verifyOddAsync', verifyOddAsync)
   fastify.decorate('verifyBigAsync', verifyBigAsync)
 
-  function verifyNumber (request, reply, done) {
+  function verifyNumber (request, _reply, done) {
     const n = request.body.n
 
     if (typeof (n) !== 'number') {
@@ -27,7 +27,7 @@ function build (opts) {
     return done()
   }
 
-  function verifyOdd (request, reply, done) {
+  function verifyOdd (request, _reply, done) {
     const n = request.body.n
 
     if (typeof (n) !== 'number' || n % 2 === 0) {
@@ -39,7 +39,7 @@ function build (opts) {
     return done()
   }
 
-  function verifyBig (request, reply, done) {
+  function verifyBig (request, _reply, done) {
     const n = request.body.n
 
     if (typeof (n) !== 'number' || n < 100) {
@@ -75,7 +75,7 @@ function build (opts) {
     fastify.route({
       method: 'GET',
       url: '/',
-      handler: (req, reply) => {
+      handler: (_req, reply) => {
         reply.send({ hello: 'world' })
       }
     })

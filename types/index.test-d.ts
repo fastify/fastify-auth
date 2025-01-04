@@ -31,14 +31,14 @@ app.register(fastifyAuth).after((_err) => {
     },
   ])
   app.auth([
-    function (request, reply, done) {
+    function () {
       expectType<FastifyInstance>(this)
     },
   ])
-  const auth = app.auth([(request, reply, done) => {}])
+  const auth = app.auth([() => {}])
   expectType<preHandlerHookHandler>(auth)
-  app.get('/secret', { preHandler: auth }, (request, reply) => {})
-  app.get('/private', { preHandler: [auth] }, (request, reply) => {})
+  app.get('/secret', { preHandler: auth }, () => {})
+  app.get('/private', { preHandler: [auth] }, () => {})
 })
 
 const typebox = fastify().withTypeProvider<TypeBoxTypeProvider>()
@@ -99,7 +99,7 @@ async function usersController (fastify: FastifyInstance): Promise<void> {
         usersMutationAccessPolicy(fastify),
       ]),
     },
-    async (req, res) => ({ success: true })
+    async () => ({ success: true })
   )
 }
 await usersController(app)
@@ -113,7 +113,7 @@ async function usersControllerV2 (fastify: FastifyInstance): Promise<void> {
     {
       onRequest: usersMutationAccessPolicy(fastify),
     },
-    async (req, res) => ({ success: true })
+    async () => ({ success: true })
   )
 }
 await usersControllerV2(app)
