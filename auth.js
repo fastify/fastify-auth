@@ -43,7 +43,7 @@ function auth (pluginOptions) {
       } else {
         for (let j = 0; j < functions[i].length; j++) {
           if (Array.isArray(functions[i][j])) {
-            throw new Error('Nesting sub-arrays is not supported')
+            throw new TypeError('Nesting sub-arrays is not supported')
           }
           functions[i][j] = functions[i][j].bind(this)
         }
