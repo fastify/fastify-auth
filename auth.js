@@ -19,7 +19,7 @@ function fastifyAuth (fastify, opts, next) {
 function auth (pluginOptions) {
   return function (functions, opts) {
     if (!Array.isArray(functions)) {
-      throw new Error('You must give an array of functions to the auth function')
+      throw new TypeError('You must give an array of functions to the auth function')
     }
     if (!functions.length) {
       throw new Error('Missing auth functions')
