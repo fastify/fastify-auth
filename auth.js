@@ -19,7 +19,7 @@ function fastifyAuth (fastify, opts, next) {
 function auth (pluginOptions) {
   return function (functions, opts) {
     if (!Array.isArray(functions)) {
-      throw new Error('You must give an array of functions to the auth function')
+      throw new TypeError('You must give an array of functions to the auth function')
     }
     if (!functions.length) {
       throw new Error('Missing auth functions')
@@ -43,7 +43,7 @@ function auth (pluginOptions) {
       } else {
         for (let j = 0; j < functions[i].length; j++) {
           if (Array.isArray(functions[i][j])) {
-            throw new Error('Nesting sub-arrays is not supported')
+            throw new TypeError('Nesting sub-arrays is not supported')
           }
           functions[i][j] = functions[i][j].bind(this)
         }
