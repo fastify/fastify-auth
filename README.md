@@ -4,8 +4,8 @@
 [![NPM version](https://img.shields.io/npm/v/@fastify/auth.svg?style=flat)](https://www.npmjs.com/package/@fastify/auth)
 [![neostandard javascript style](https://img.shields.io/badge/code_style-neostandard-brightgreen?style=flat)](https://github.com/neostandard/neostandard)
 
-This module does not provide an authentication strategy, but it provides a very fast utility to handle authentication (and multiple strategies) in your routes, without adding overhead.
-Check out a complete example [here](test/example.js).
+This module does not provide an authentication strategy but offers a fast utility to handle authentication and multiple strategies in routes without adding overhead.
+See a complete example [here](test/example.js).
 
 ## Install
 ```
@@ -27,9 +27,9 @@ in the table above.
 See [Fastify's LTS policy](https://github.com/fastify/fastify/blob/main/docs/Reference/LTS.md) for more details.
 
 ## Usage
-As said above, `@fastify/auth` does not provide an authentication strategy, so you must provide authentication strategies yourself, with a decorator or another plugin.
+`@fastify/auth` does not provide an authentication strategy; authentication strategies must be provided using a decorator or another plugin.
 
-In the following example, you will find a straightforward implementation that should help you understand how to use this module:
+The following example provides a straightforward implementation to demonstrate the usage of this module:
 ```js
 fastify
   .decorate('verifyJWTandLevel', function (request, reply, done) {
@@ -57,7 +57,7 @@ fastify
   })
 ```
 
-The default relationship of these customized authentication strategies is `or`, while we could also use `and`:
+The default relationship of these customized authentication strategies is `or`, but `and` can also be used:
 ```js
 fastify
   .decorate('verifyAdmin', function (request, reply, done) {
@@ -87,8 +87,8 @@ fastify
   })
 ```
 
-If you need composite authentication, such as verifying user account passwords and levels or meeting VIP eligibility criteria, you can use nested arrays.
-For example if you need the following logic: [(verifyUserPassword `and` verifyLevel) `or` (verifyVIP)], it can be achieved with the code below:
+For composite authentication, such as verifying user passwords and levels or meeting VIP criteria, use nested arrays.
+For example, the logic [(verifyUserPassword `and` verifyLevel) `or` (verifyVIP)] can be achieved with the following code:
 ```js
 fastify
   .decorate('verifyUserPassword', function (request, reply, done) {
@@ -138,7 +138,7 @@ fastify.register(require('@fastify/auth'), { defaultRelation: 'and'} )
 
 _For more examples, please check [`example-composited.js`](test/example-composited.js)_
 
-This plugin supports `callback`s and `Promise`s returned by functions. Note that an `async` function **does not have** to call the `done` parameter, otherwise, the route handler to which the auth methods are linked to [might be called multiple times](https://fastify.dev/docs/latest/Reference/Hooks/#respond-to-a-request-from-a-hook):
+This plugin supports `callback`s and `Promise`s returned by functions. Note that an `async` function **does not have** to call the `done` parameter, otherwise, the route handler linked to the auth methods [might be called multiple times](https://fastify.dev/docs/latest/Reference/Hooks/#respond-to-a-request-from-a-hook):
 ```js
 fastify
   .decorate('asyncVerifyJWTandLevel', async function (request, reply) {
@@ -168,11 +168,10 @@ fastify
 ```
 
 
-Keep in mind that route definition should either be done as [a plugin](https://github.com/fastify/fastify/blob/master/docs/Reference/Plugins.md) or within an `.after()` callback.
-For a complete example implementation, see [example.js](test/example.js).
+Route definition should be done as [a plugin](https://github.com/fastify/fastify/blob/master/docs/Reference/Plugins.md) or within an `.after()` callback. For a complete example, see [example.js](test/example.js).
 
-`@fastify/auth` will run all your authentication methods and your request will continue if at least one succeeds, otherwise, it will return an error to the client.
-Any successful authentication will automatically stop `@fastify/auth` from trying the rest unless you provide the `run: 'all'` parameter:
+`@fastify/auth` runs all authentication methods, allowing the request to continue if at least one succeeds; otherwise, it returns an error to the client.
+Any successful authentication stops `@fastify/auth` from trying the rest unless the `run: 'all'` parameter is provided:
 ```js
 fastify.route({
   method: 'GET',
@@ -187,11 +186,11 @@ fastify.route({
   handler: (req, reply) => { reply.send({ hello: 'world' }) }
 })
 ```
-This example will show all the console logs and will reply always with `401: you are not authenticated`.
-The `run` parameter is useful if you are adding to the request business data read from auth-tokens.
+This example shows all console logs and always replies with `401: you are not authenticated`.
+The `run` parameter is useful for adding business data read from auth tokens to the request.
 
 
-You can use this plugin at the route level as in the above example or at the hook level by using the `preHandler` hook:
+This plugin can be used at the route level as in the above example or at the hook level using the `preHandler` hook:
 ```js
 fastify.addHook('preHandler', fastify.auth([
   fastify.verifyJWTandLevel,
@@ -208,17 +207,17 @@ fastify.route({
 })
 ```
 
-The difference between the two approaches is that if you use the route level `preHandler` function the authentication will run just for the selected route. Whereas if you use the `preHandler` hook the authentication will run for all the routes declared inside the current plugin (and its descendants).
+The difference between the two approaches is that using the route-level `preHandler` function runs authentication for the selected route only, while using the `preHandler` hook runs authentication for all routes in the current plugin and its descendants.
 
 ## Security Considerations
 
 ### `onRequest` vs. `preHandler` hook
 
-The main difference between the `onRequest` and `preHandler` stages of the [Fastify Lifecycle](https://fastify.dev/docs/latest/Reference/Lifecycle/) is that the body payload is not parsed in the  `onRequest` stage. Parsing the body can be a potential security risk, as it can be used for denial of service (DoS) attacks. Therefore, it is recommended to avoid parsing the body for unauthorized access.
+The main difference between the `onRequest` and `preHandler` stages of the [Fastify Lifecycle](https://fastify.dev/docs/latest/Reference/Lifecycle/) is that the body payload is not parsed in the `onRequest` stage. Parsing the body can be a potential security risk, as it can be used for denial of service (DoS) attacks. Therefore, it is recommended to avoid parsing the body for unauthorized access.
 
-Using the `@fastify/auth` plugin in the `preHandler` hook can result in unnecessary memory allocation if a malicious user sends a large payload in the request body and the request is unauthorized. In this case, Fastify will parse the body, even though the request is not authorized, leading to unnecessary memory allocation. To avoid this, it is recommended to use the `onRequest` hook for authentication, if the authentication method does not require the request body, such as `@fastify/jwt`, which expects the authentication in the request header.
+Using the `@fastify/auth` plugin in the `preHandler` hook can result in unnecessary memory allocation if a malicious user sends a large payload in the request body and the request is unauthorized. Fastify will parse the body, even though the request is not authorized, leading to unnecessary memory allocation. To avoid this, use the `onRequest` hook for authentication if the method does not require the request body, such as `@fastify/jwt`, which expects authentication in the request header.
 
-For authentication methods that do require the request body, such as sending a token in the body, you must use the `preHandler` hook.
+For authentication methods that require the request body, such as sending a token in the body, use the `preHandler` hook.
 
 In mixed cases, you must use the `preHandler` hook.
 
