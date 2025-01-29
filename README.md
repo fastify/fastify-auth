@@ -131,7 +131,7 @@ If the `relation` (`defaultRelation`) parameter is `or`, then the relation insid
 | `fastify.auth([f1, f2, [f3, f4]], { relation: 'and' })` | `f1 AND f2 AND (f3 OR f4)` |
 
 
-You can use the `defaultRelation` option while registering the plugin, to change the default `relation`:
+The `defaultRelation` option can be used while registering the plugin to change the default `relation`:
 ```js
 fastify.register(require('@fastify/auth'), { defaultRelation: 'and'} )
 ```
