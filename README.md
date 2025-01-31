@@ -1,6 +1,6 @@
 # @fastify/auth
 
-[![CI](https://github.com/fastify/fastify-auth/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/fastify/fastify-auth/actions/workflows/ci.yml)
+[![CI](https://github.com/fastify/fastify-auth/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/fastify/fastify-auth/actions/workflows/ci.yml)
 [![NPM version](https://img.shields.io/npm/v/@fastify/auth.svg?style=flat)](https://www.npmjs.com/package/@fastify/auth)
 [![neostandard javascript style](https://img.shields.io/badge/code_style-neostandard-brightgreen?style=flat)](https://github.com/neostandard/neostandard)
 
@@ -168,7 +168,7 @@ fastify
 ```
 
 
-Route definition should be done as [a plugin](https://github.com/fastify/fastify/blob/master/docs/Reference/Plugins.md) or within an `.after()` callback. For a complete example, see [example.js](test/example.js).
+Route definition should be done as [a plugin](https://github.com/fastify/fastify/blob/main/docs/Reference/Plugins.md) or within an `.after()` callback. For a complete example, see [example.js](test/example.js).
 
 `@fastify/auth` runs all authentication methods, allowing the request to continue if at least one succeeds; otherwise, it returns an error to the client.
 Any successful authentication stops `@fastify/auth` from trying the rest unless the `run: 'all'` parameter is provided:
