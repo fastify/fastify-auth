@@ -16,6 +16,13 @@ app.register(fastifyAuth).after((_err) => {
       expectType<FastifyReply>(reply)
       expectType<Done>(done)
     },
+  ], { relation: 'or' })
+  app.auth([
+    (request, reply, done) => {
+      expectType<FastifyRequest>(request)
+      expectType<FastifyReply>(reply)
+      expectType<Done>(done)
+    },
   ], { relation: 'and' })
   app.auth([
     (request, reply, done) => {
@@ -53,6 +60,13 @@ app.register(fastifyAuth).after((_err) => {
       expectType<FastifyReply>(reply)
       await Promise.resolve()
     },
+  ], { relation: 'or' })
+  app.auth([
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      expectType<FastifyRequest>(request)
+      expectType<FastifyReply>(reply)
+      await Promise.resolve()
+    },
   ], { relation: 'and' })
   app.auth([
     async (request: FastifyRequest, reply: FastifyReply) => {
@@ -84,6 +98,13 @@ app.register(fastifyAuth).after((_err) => {
       return Promise.resolve()
     },
   ])
+  app.auth([
+    (request: FastifyRequest, reply: FastifyReply) => {
+      expectType<FastifyRequest>(request)
+      expectType<FastifyReply>(reply)
+      return Promise.resolve()
+    },
+  ], { relation: 'or' })
   app.auth([
     (request: FastifyRequest, reply: FastifyReply) => {
       expectType<FastifyRequest>(request)
