@@ -32,12 +32,9 @@ declare namespace fastifyAuth {
   export type FastifyAuthFunction<
     Request extends FastifyRequest = FastifyRequest,
     Reply extends FastifyReply = FastifyReply
-  > = (
-    this: FastifyInstance,
-    request: Request,
-    reply: Reply,
-    done: (error?: Error) => void
-  ) => void
+  > =
+    | ((this: FastifyInstance, request: Request, reply: Reply, done: (error?: Error) => void) => void)
+    | ((this: FastifyInstance, request: Request, reply: Reply) => Promise<void>)
 
   /**
    * @link [`fastify-auth` options documentation](https://github.com/fastify/fastify-auth#options)
