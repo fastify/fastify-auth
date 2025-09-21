@@ -60,7 +60,6 @@
   "devDependencies": {
     "@fastify/jwt": "^10.0.0",
     "@fastify/leveldb": "^6.0.0",
-    "@fastify/pre-commit": "^2.1.0",
     "@fastify/type-provider-json-schema-to-ts": "^5.0.0",
     "@fastify/type-provider-typebox": "^5.0.0",
     "@types/node": "^24.0.8",
