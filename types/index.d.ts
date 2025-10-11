@@ -29,15 +29,35 @@ type FastifyAuth = FastifyPluginCallback<fastifyAuth.FastifyAuthPluginOptions>
 declare namespace fastifyAuth {
   export type FastifyAuthRelation = 'and' | 'or'
 
-  export type FastifyAuthFunction<
-    Request extends FastifyRequest = FastifyRequest,
-    Reply extends FastifyReply = FastifyReply
+  export type FastifyAuthSyncFunction<
+      Request extends FastifyRequest = FastifyRequest,
+      Reply extends FastifyReply = FastifyReply
   > = (
     this: FastifyInstance,
     request: Request,
     reply: Reply,
     done: (error?: Error) => void
   ) => void
+
+  export type FastifyAuthAsyncFunction<
+      Request extends FastifyRequest = FastifyRequest,
+      Reply extends FastifyReply = FastifyReply
+  > = (
+    this: FastifyInstance,
+    request: Request,
+    reply: Reply
+  ) => Promise<void>
+
+  export type FastifyAuthFunction<
+      Request extends FastifyRequest = FastifyRequest,
+      Reply extends FastifyReply = FastifyReply,
+      Return extends
+      | ReturnType<FastifyAuthSyncFunction<Request, Reply>>
+      | ReturnType<FastifyAuthAsyncFunction<Request, Reply>>
+      = ReturnType<FastifyAuthSyncFunction<Request, Reply>>
+  > = Return extends ReturnType<FastifyAuthSyncFunction<Request, Reply>>
+    ? FastifyAuthSyncFunction<Request, Reply>
+    : FastifyAuthAsyncFunction<Request, Reply>
 
   /**
    * @link [`fastify-auth` options documentation](https://github.com/fastify/fastify-auth#options)

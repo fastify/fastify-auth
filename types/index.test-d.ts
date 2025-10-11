@@ -9,6 +9,7 @@ const app = fastify()
 type Done = (error?: Error) => void
 
 app.register(fastifyAuth).after((_err) => {
+  // Callback tests
   app.auth([
     (request, reply, done) => {
       expectType<FastifyRequest>(request)
@@ -22,6 +23,13 @@ app.register(fastifyAuth).after((_err) => {
       expectType<FastifyReply>(reply)
       expectType<Done>(done)
     },
+  ], { relation: 'and' })
+  app.auth([
+    (request, reply, done) => {
+      expectType<FastifyRequest>(request)
+      expectType<FastifyReply>(reply)
+      expectType<Done>(done)
+    },
   ], { run: 'all' })
   app.auth([
     (request, reply, done) => {
@@ -29,12 +37,123 @@ app.register(fastifyAuth).after((_err) => {
       expectType<FastifyReply>(reply)
       expectType<Done>(done)
     },
+  ], { relation: 'or', run: 'all' })
+  app.auth([
+    (request, reply, done) => {
+      expectType<FastifyRequest>(request)
+      expectType<FastifyReply>(reply)
+      expectType<Done>(done)
+    },
+  ], { relation: 'and', run: 'all' })
+
+  // Async function tests
+  app.auth([
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      expectType<FastifyRequest>(request)
+      expectType<FastifyReply>(reply)
+      await Promise.resolve()
+    },
+  ])
+  app.auth([
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      expectType<FastifyRequest>(request)
+      expectType<FastifyReply>(reply)
+      await Promise.resolve()
+    },
+  ], { relation: 'or' })
+  app.auth([
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      expectType<FastifyRequest>(request)
+      expectType<FastifyReply>(reply)
+      await Promise.resolve()
+    },
+  ], { relation: 'and' })
+  app.auth([
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      expectType<FastifyRequest>(request)
+      expectType<FastifyReply>(reply)
+      await Promise.resolve()
+    },
+  ], { run: 'all' })
+  app.auth([
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      expectType<FastifyRequest>(request)
+      expectType<FastifyReply>(reply)
+      await Promise.resolve()
+    },
+  ], { relation: 'or', run: 'all' })
+  app.auth([
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      expectType<FastifyRequest>(request)
+      expectType<FastifyReply>(reply)
+      await Promise.resolve()
+    },
+  ], { relation: 'and', run: 'all' })
+
+  // Promise-based function tests
+  app.auth([
+    (request: FastifyRequest, reply: FastifyReply) => {
+      expectType<FastifyRequest>(request)
+      expectType<FastifyReply>(reply)
+      return Promise.resolve()
+    },
+  ])
+  app.auth([
+    (request: FastifyRequest, reply: FastifyReply) => {
+      expectType<FastifyRequest>(request)
+      expectType<FastifyReply>(reply)
+      return Promise.resolve()
+    },
+  ], { relation: 'or' })
+  app.auth([
+    (request: FastifyRequest, reply: FastifyReply) => {
+      expectType<FastifyRequest>(request)
+      expectType<FastifyReply>(reply)
+      return Promise.resolve()
+    },
+  ], { relation: 'and' })
+  app.auth([
+    (request: FastifyRequest, reply: FastifyReply) => {
+      expectType<FastifyRequest>(request)
+      expectType<FastifyReply>(reply)
+      return Promise.resolve()
+    },
+  ], { run: 'all' })
+  app.auth([
+    (request: FastifyRequest, reply: FastifyReply) => {
+      expectType<FastifyRequest>(request)
+      expectType<FastifyReply>(reply)
+      return Promise.resolve()
+    },
+  ], { relation: 'or', run: 'all' })
+  app.auth([
+    (request: FastifyRequest, reply: FastifyReply) => {
+      expectType<FastifyRequest>(request)
+      expectType<FastifyReply>(reply)
+      return Promise.resolve()
+    },
+  ], { relation: 'and', run: 'all' })
+
+  // this context tests
+  app.auth([
+    async function () {
+      expectType<FastifyInstance>(this)
+      await Promise.resolve()
+    },
   ])
   app.auth([
     function () {
       expectType<FastifyInstance>(this)
+      return Promise.resolve()
     },
   ])
+  app.auth([
+    async function () {
+      expectType<FastifyInstance>(this)
+      await Promise.resolve()
+    },
+  ])
+
   const auth = app.auth([() => {}])
   expectType<preHandlerHookHandler>(auth)
   app.get('/secret', { preHandler: auth }, () => {})
