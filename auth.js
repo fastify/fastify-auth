@@ -8,11 +8,13 @@ const DEFAULT_RELATION = 'or'
 function fastifyAuth (fastify, opts, next) {
   if (opts.defaultRelation && opts.defaultRelation !== 'or' && opts.defaultRelation !== 'and') {
     return next(new Error("The value of default relation should be one of ['or', 'and']"))
-  } else if (!opts.defaultRelation) {
-    opts.defaultRelation = DEFAULT_RELATION
+  }   
+  
+  const pluginOptions = {
+    defaultRelation: opts.defaultRelation || DEFAULT_RELATION
   }
 
-  fastify.decorate('auth', auth(opts))
+  fastify.decorate('auth', auth(pluginOptions))
   next()
 }
 
