@@ -5,6 +5,7 @@ const reusify = require('reusify')
 
 const DEFAULT_RELATION = 'or'
 
+/** @type {typeof import('./types/index').fastifyAuth} */
 function fastifyAuth (fastify, opts, next) {
   if (opts.defaultRelation && opts.defaultRelation !== 'or' && opts.defaultRelation !== 'and') {
     return next(new Error("The value of default relation should be one of ['or', 'and']"))
@@ -18,6 +19,7 @@ function fastifyAuth (fastify, opts, next) {
   next()
 }
 
+/** @param {import('./types/index').FastifyAuthPluginOptions} pluginOptions */
 function auth (pluginOptions) {
   return function (functions, opts) {
     if (!Array.isArray(functions)) {
