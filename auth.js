@@ -184,7 +184,7 @@ function auth (pluginOptions) {
         }
       }
 
-      this.completeAuth = function () {
+      this.completeAuth = function completeAuth () {
         if (that.currentError && (!that.reply.raw.statusCode || that.reply.raw.statusCode < 400)) {
           that.reply.code(401)
         } else if (!that.currentError && that.reply.raw.statusCode && that.reply.raw.statusCode >= 400) {
