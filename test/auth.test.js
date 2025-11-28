@@ -17,6 +17,20 @@ test('registering plugin with invalid default relation', (t, done) => {
   })
 })
 
+test('registering plugin should not mutate opts', (t, done) => {
+  t.plan(2)
+
+  const fastify = Fastify()
+  const opts = {}
+  fastify.register(fastifyAuth, opts)
+
+  fastify.ready((err) => {
+    t.assert.ifError(err)
+    t.assert.strictEqual(opts.defaultRelation, undefined)
+    done()
+  })
+})
+
 test('Clean status code through auth pipeline', (t, done) => {
   t.plan(3)
 
