@@ -41,11 +41,13 @@ function auth (pluginOptions) {
       throw new Error('The value of options.run must be \'all\'')
     }
 
-    for (let i = 0; i < functions.length; i++) {
+    const functionsLength = functions.length
+    for (let i = 0; i < functionsLength; i++) {
       if (Array.isArray(functions[i]) === false) {
         functions[i] = functions[i].bind(this)
       } else {
-        for (let j = 0; j < functions[i].length; j++) {
+        const subArrayLength = functions[i].length
+        for (let j = 0; j < subArrayLength; j++) {
           if (Array.isArray(functions[i][j])) {
             throw new TypeError('Nesting sub-arrays is not supported')
           }
