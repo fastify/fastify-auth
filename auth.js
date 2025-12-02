@@ -5,17 +5,21 @@ const reusify = require('reusify')
 
 const DEFAULT_RELATION = 'or'
 
+/** @type {typeof import('./types/index').fastifyAuth} */
 function fastifyAuth (fastify, opts, next) {
   if (opts.defaultRelation && opts.defaultRelation !== 'or' && opts.defaultRelation !== 'and') {
     return next(new Error("The value of default relation should be one of ['or', 'and']"))
-  } else if (!opts.defaultRelation) {
-    opts.defaultRelation = DEFAULT_RELATION
   }
 
-  fastify.decorate('auth', auth(opts))
+  const pluginOptions = {
+    defaultRelation: opts.defaultRelation || DEFAULT_RELATION
+  }
+
+  fastify.decorate('auth', auth(pluginOptions))
   next()
 }
 
+/** @param {import('./types/index').FastifyAuthPluginOptions} pluginOptions */
 function auth (pluginOptions) {
   return function (functions, opts) {
     if (!Array.isArray(functions)) {
@@ -37,11 +41,13 @@ function auth (pluginOptions) {
       throw new Error('The value of options.run must be \'all\'')
     }
 
-    for (let i = 0; i < functions.length; i++) {
+    const functionsLength = functions.length
+    for (let i = 0; i < functionsLength; i++) {
       if (Array.isArray(functions[i]) === false) {
         functions[i] = functions[i].bind(this)
       } else {
-        for (let j = 0; j < functions[i].length; j++) {
+        const subArrayLength = functions[i].length
+        for (let j = 0; j < subArrayLength; j++) {
           if (Array.isArray(functions[i][j])) {
             throw new TypeError('Nesting sub-arrays is not supported')
           }
@@ -180,7 +186,7 @@ function auth (pluginOptions) {
         }
       }
 
-      this.completeAuth = function () {
+      this.completeAuth = function completeAuth () {
         if (that.currentError && (!that.reply.raw.statusCode || that.reply.raw.statusCode < 400)) {
           that.reply.code(401)
         } else if (!that.currentError && that.reply.raw.statusCode && that.reply.raw.statusCode >= 400) {
