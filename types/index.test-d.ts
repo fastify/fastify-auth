@@ -136,19 +136,19 @@ app.register(fastifyAuth).after((_err) => {
 
   // this context tests
   app.auth([
-    async function () {
+    async function (this: FastifyInstance) {
       expectType<FastifyInstance>(this)
       await Promise.resolve()
     },
   ])
   app.auth([
-    function () {
+    function (this: FastifyInstance) {
       expectType<FastifyInstance>(this)
       return Promise.resolve()
     },
   ])
   app.auth([
-    async function () {
+    async function (this: FastifyInstance) {
       expectType<FastifyInstance>(this)
       await Promise.resolve()
     },
