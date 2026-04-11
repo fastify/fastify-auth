@@ -28,7 +28,7 @@
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "test": "npm run test:unit && npm run test:typescript",
-    "test:typescript": "tsd",
+    "test:typescript": "tstyche",
     "test:unit": "c8 --100 node --test"
   },
   "keywords": [
@@ -68,7 +68,7 @@
     "fastify": "^5.0.0",
     "neostandard": "^0.13.0",
     "rimraf": "^6.0.1",
-    "tsd": "^0.33.0"
+    "tstyche": "^7.0.0"
   },
   "dependencies": {
     "fastify-plugin": "^5.0.0",

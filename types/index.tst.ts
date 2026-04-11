@@ -1,6 +1,6 @@
 import fastify, { FastifyInstance, FastifyReply, FastifyRequest, preHandlerHookHandler } from 'fastify'
 import fastifyAuth from '..'
-import { expectType } from 'tsd'
+import { expect } from 'tstyche'
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 import { JsonSchemaToTsProvider } from '@fastify/type-provider-json-schema-to-ts'
 
@@ -11,33 +11,33 @@ type Done = (error?: Error) => void
 app.register(fastifyAuth).after((_err) => {
   app.auth([
     (request, reply, done) => {
-      expectType<FastifyRequest>(request)
-      expectType<FastifyReply>(reply)
-      expectType<Done>(done)
+      expect(request).type.toBe<FastifyRequest>()
+      expect(reply).type.toBe<FastifyReply>()
+      expect(done).type.toBe<Done>()
     },
   ], { relation: 'or' })
   app.auth([
     (request, reply, done) => {
-      expectType<FastifyRequest>(request)
-      expectType<FastifyReply>(reply)
-      expectType<Done>(done)
+      expect(request).type.toBe<FastifyRequest>()
+      expect(reply).type.toBe<FastifyReply>()
+      expect(done).type.toBe<Done>()
     },
   ], { run: 'all' })
   app.auth([
     (request, reply, done) => {
-      expectType<FastifyRequest>(request)
-      expectType<FastifyReply>(reply)
-      expectType<Done>(done)
+      expect(request).type.toBe<FastifyRequest>()
+      expect(reply).type.toBe<FastifyReply>()
+      expect(done).type.toBe<Done>()
     },
   ])
   app.auth([
     function () {
-      expectType<FastifyInstance>(this)
+      expect(this).type.toBe<FastifyInstance>()
     },
   ])
   const auth = app.auth([() => {}])
-  expectType<preHandlerHookHandler>(auth)
-  app.get('/secret', { preHandler: auth }, () => {})
+  expect(auth).type.toBe<preHandlerHookHandler>()
+  app.get('/secret', { preHandler: auth }, () => { })
   app.get('/private', { preHandler: [auth] }, () => {})
 })
 
@@ -102,7 +102,7 @@ async function usersController (fastify: FastifyInstance): Promise<void> {
     async () => ({ success: true })
   )
 }
-await usersController(app)
+usersController(app)
 
 async function usersControllerV2 (fastify: FastifyInstance): Promise<void> {
   fastify.patch<{
@@ -116,4 +116,4 @@ async function usersControllerV2 (fastify: FastifyInstance): Promise<void> {
     async () => ({ success: true })
   )
 }
-await usersControllerV2(app)
+usersControllerV2(app)
