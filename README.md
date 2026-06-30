@@ -237,8 +237,8 @@ In mixed cases, you must use the `preHandler` hook.
 
 ## Acknowledgments
 
-This project is kindly sponsored by:
-- [LetzDoIt](https://www.letzdoitapp.com/)
+Past sponsors:
+- LetzDoIt
 
 ## License
 
