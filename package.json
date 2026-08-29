@@ -20,7 +20,7 @@
       "url": "https://opencollective.com/fastify"
     }
   ],
-  "main": "auth.js",
+  "main": "index.js",
   "type": "commonjs",
   "types": "types/index.d.ts",
   "scripts": {

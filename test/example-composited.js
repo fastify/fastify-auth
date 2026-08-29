@@ -6,7 +6,7 @@ function build (opts) {
   const fastify = Fastify(opts)
 
   fastify
-    .register(require('../auth'))
+    .register(require('../index'))
     .after(routes)
 
   fastify.decorate('verifyNumber', verifyNumber)

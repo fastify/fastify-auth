@@ -2,7 +2,7 @@
 
 const { test } = require('node:test')
 const Fastify = require('fastify')
-const fastifyAuth = require('../auth')
+const fastifyAuth = require('../index')
 
 test('registering plugin with invalid default relation', (t, done) => {
   t.plan(2)
@@ -12,7 +12,7 @@ test('registering plugin with invalid default relation', (t, done) => {
 
   fastify.ready((err) => {
     t.assert.ok(err)
-    t.assert.strictEqual(err.message, 'The value of default relation should be one of [\'or\', \'and\']')
+    t.assert.strictEqual(err.message, 'The value of default relation should be one of [or,and], not "auth"')
     done()
   })
 })
@@ -106,7 +106,7 @@ test('Options: non-array functions input', (t, done) => {
       app.get('/', (_req, res) => res.send(42))
     } catch (error) {
       t.assert.ok(error)
-      t.assert.strictEqual(error.message, 'You must give an array of functions to the auth function')
+      t.assert.strictEqual(error.message, 'You must give an array of functions, not "string"')
     }
   })
 
@@ -154,7 +154,7 @@ test('Options: faulty relation', (t, done) => {
       app.get('/', (_req, res) => res.send(42))
     } catch (error) {
       t.assert.ok(error)
-      t.assert.strictEqual(error.message, 'The value of options.relation should be one of [\'or\', \'and\']')
+      t.assert.strictEqual(error.message, 'The value of default relation should be one of [or,and], not "foo"')
     }
   })
 
@@ -178,7 +178,7 @@ test('Options: faulty run', (t, done) => {
       app.get('/', (_req, res) => res.send(42))
     } catch (error) {
       t.assert.ok(error)
-      t.assert.strictEqual(error.message, 'The value of options.run must be \'all\'')
+      t.assert.strictEqual(error.message, 'The value of run option must be "all", not "foo"')
     }
   })
 

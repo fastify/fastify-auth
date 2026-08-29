@@ -16,10 +16,7 @@ declare module 'fastify' {
       Reply extends FastifyReply = FastifyReply
     >(
       functions: fastifyAuth.FastifyAuthFunction<Request, Reply>[] | (fastifyAuth.FastifyAuthFunction<Request, Reply> | fastifyAuth.FastifyAuthFunction<Request, Reply>[])[],
-      options?: {
-        relation?: fastifyAuth.FastifyAuthRelation;
-        run?: 'all';
-      }
+      options?: fastifyAuth.FastifyAuthOptions
     ): preHandlerHookHandler<RawServer, RawRequest, RawReply, RouteGenericInterface, ContextConfigDefault, FastifySchema, TypeProvider, Logger>;
   }
 }
@@ -28,6 +25,12 @@ type FastifyAuth = FastifyPluginCallback<fastifyAuth.FastifyAuthPluginOptions>
 
 declare namespace fastifyAuth {
   export type FastifyAuthRelation = 'and' | 'or'
+  export type FastifyAuthRunMode = null | 'all'
+
+  export type FastifyAuthHandlerArray = (
+  | FastifyAuthFunction
+  | FastifyAuthFunction[]
+  )[]
 
   export type FastifyAuthFunction<
     Request extends FastifyRequest = FastifyRequest,
@@ -38,6 +41,23 @@ declare namespace fastifyAuth {
     reply: Reply,
     done: (error?: Error) => void
   ) => void
+
+  /**
+   * Options for individual auth handler
+   */
+  export interface FastifyAuthOptions {
+    /**
+     * The relation between the functions for this specific handler.
+     * Overrides the defaultRelation from plugin options.
+     */
+    relation?: FastifyAuthRelation;
+    /**
+     * Run mode for the auth functions.
+     *
+     * @default null
+     */
+    run?: FastifyAuthRunMode;
+  }
 
   /**
    * @link [`fastify-auth` options documentation](https://github.com/fastify/fastify-auth#options)
