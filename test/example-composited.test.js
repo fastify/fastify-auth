@@ -842,16 +842,6 @@ test('Or Relation run all fail', (t, done) => {
   })
 })
 
-test('Nested sub-arrays not supported', (t, done) => {
-  t.plan(1)
-  try {
-    fastify.auth([[fastify.verifyBig, [fastify.verifyNumber]]])
-  } catch (err) {
-    t.assert.deepStrictEqual(err.message, 'Nesting sub-arrays is not supported')
-    done()
-  }
-})
-
 test('And Relation run all', (t, done) => {
   t.plan(2)
 

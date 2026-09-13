@@ -19,6 +19,77 @@ function fastifyAuth (fastify, opts, next) {
   next()
 }
 
+function treeCallback (funcs, predicate, accept, reject, decisiveAccept, earlyStop) {
+  let i = 0
+  const decisiveCallback = decisiveAccept ? accept : reject
+  const earlyExit = earlyStop
+    ? decisiveCallback
+    : (...args) => {
+        function exec () {
+          const func = funcs[i]
+          i += 1
+          if (i <= funcs.length) {
+            return predicate(func, exec, exec)
+          } else {
+            return decisiveCallback(...args)
+          }
+        }
+        return exec()
+      }
+  function exec () {
+    const func = funcs[i]
+    i += 1
+    if (i < funcs.length) {
+      if (decisiveAccept) {
+        return predicate(func, earlyExit, exec)
+      } else {
+        return predicate(func, exec, earlyExit)
+      }
+    } else {
+      return predicate(func, accept, reject)
+    }
+  }
+  return exec()
+}
+
+function someCallback (funcs, predicate, accept, reject, earlyStop) {
+  if (funcs.length > 0) {
+    return treeCallback(funcs, predicate, accept, reject, true, earlyStop)
+  }
+  return reject()
+}
+
+function everyCallback (funcs, predicate, accept, reject, earlyStop) {
+  if (funcs.length > 0) {
+    return treeCallback(funcs, predicate, accept, reject, false, earlyStop)
+  }
+  return accept()
+}
+
+function vectorPredicate (gate, predicate, earlyStop) {
+  return function (func, accept, reject) {
+    if (Array.isArray(func)) {
+      return gate(func, predicate, accept, reject, earlyStop)
+    } else {
+      return predicate(func, accept, reject)
+    }
+  }
+}
+
+function orGate (funcs, predicate, accept, reject, earlyStop) {
+  return someCallback(
+    funcs, vectorPredicate(andGate, predicate, earlyStop),
+    accept, reject, earlyStop
+  )
+}
+
+function andGate (funcs, predicate, accept, reject, earlyStop) {
+  return everyCallback(
+    funcs, vectorPredicate(orGate, predicate, earlyStop),
+    accept, reject, earlyStop
+  )
+}
+
 /** @param {import('./types/index').FastifyAuthPluginOptions} pluginOptions */
 function auth (pluginOptions) {
   return function (functions, opts) {
@@ -41,20 +112,16 @@ function auth (pluginOptions) {
       throw new Error('The value of options.run must be \'all\'')
     }
 
-    const functionsLength = functions.length
-    for (let i = 0; i < functionsLength; i++) {
-      if (Array.isArray(functions[i]) === false) {
-        functions[i] = functions[i].bind(this)
-      } else {
-        const subArrayLength = functions[i].length
-        for (let j = 0; j < subArrayLength; j++) {
-          if (Array.isArray(functions[i][j])) {
-            throw new TypeError('Nesting sub-arrays is not supported')
-          }
-          functions[i][j] = functions[i][j].bind(this)
+    const bindall = (funcs) => {
+      for (const [i, func] of funcs.entries()) {
+        if (Array.isArray(func)) {
+          bindall(funcs[i])
+        } else {
+          funcs[i] = func.bind(this)
         }
       }
     }
+    bindall(functions)
 
     const instance = reusify(Auth)
 
@@ -66,134 +133,57 @@ function auth (pluginOptions) {
       obj.done = done
       obj.functions = this.functions
       obj.options = this.options
-      obj.i = 0
-      obj.j = 0
-      obj.currentError = null
-      obj.skipFurtherErrors = false
-      obj.skipFurtherArrayErrors = false
-
-      obj.nextAuth()
+      obj.doAuth()
     }
 
     return _auth.bind({ functions, options })
 
     function Auth () {
-      this.next = null
-      this.i = 0
-      this.j = 0
       this.functions = []
       this.options = {}
       this.request = null
       this.reply = null
       this.done = null
-      this.currentError = null
-      this.skipFurtherErrors = false
-      this.skipFurtherArrayErrors = false
 
       const that = this
 
-      this.nextAuth = function nextAuth (err) {
-        if (!that.skipFurtherErrors) that.currentError = err
-
-        const func = that.functions[that.i++]
-        if (!func) {
-          return that.completeAuth()
-        }
-
-        if (!Array.isArray(func)) {
-          that.processAuth(func, (err) => {
-            if (that.options.run !== 'all') that.currentError = err
-
-            if (that.options.relation === 'and') {
-              if (err && that.options.run !== 'all') {
-                that.completeAuth()
-              } else {
-                if (err && that.options.run === 'all' && !that.skipFurtherErrors) {
-                  that.skipFurtherErrors = true
-                  that.currentError = err
-                }
-                that.nextAuth(err)
-              }
-            } else {
-              if (!err && that.options.run !== 'all') {
-                that.completeAuth()
-              } else {
-                if (!err && that.options.run === 'all') {
-                  that.skipFurtherErrors = true
-                  that.currentError = null
-                }
-                that.nextAuth(err)
-              }
-            }
-          })
-        } else {
-          that.j = 0
-          that.skipFurtherArrayErrors = false
-          that.processAuthArray(func, (err) => {
-            if (that.options.relation === 'and') { // sub-array relation is OR
-              if (!err && that.options.run !== 'all') {
-                that.nextAuth(err)
-              } else {
-                that.currentError = err
-                that.nextAuth(err)
-              }
-            } else { // sub-array relation is AND
-              if (err && that.options.run !== 'all') {
-                that.currentError = err
-                that.nextAuth(err)
-              } else {
-                if (!err && that.options.run !== 'all') {
-                  that.currentError = null
-                  return that.completeAuth()
-                }
-                that.nextAuth(err)
-              }
-            }
-          })
-        }
+      this.doAuth = function doAuth () {
+        const earlyStop = that.options.run !== 'all'
+        const gate = that.options.relation === 'or' ? orGate : andGate
+        return gate(
+          that.functions,
+          that.processAuth,
+          that.acceptAuth,
+          that.rejectAuth,
+          earlyStop
+        )
       }
 
-      this.processAuthArray = function processAuthArray (funcs, callback, err) {
-        const func = funcs[that.j++]
-        if (!func) return callback(err)
-
-        that.processAuth(func, (err) => {
-          if (that.options.relation === 'and') { // sub-array relation is OR
-            if (!err && that.options.run !== 'all') {
-              callback(err)
-            } else {
-              if (!err && that.options.run === 'all') {
-                that.skipFurtherArrayErrors = true
-              }
-              that.processAuthArray(funcs, callback, that.skipFurtherArrayErrors ? null : err)
-            }
-          } else { // sub-array relation is AND
-            if (err && that.options.run !== 'all') callback(err)
-            else that.processAuthArray(funcs, callback, err)
-          }
-        })
-      }
-
-      this.processAuth = function processAuth (func, callback) {
+      this.processAuth = function processAuth (func, accept, reject) {
         try {
-          const maybePromise = func(that.request, that.reply, callback)
+          const maybePromise = func(that.request, that.reply, (err) => err ? reject(err) : accept())
 
           if (maybePromise && typeof maybePromise.then === 'function') {
-            maybePromise.then(() => callback(null), callback)
+            maybePromise.then(accept, reject)
           }
         } catch (err) {
-          callback(err)
+          reject(err)
         }
       }
 
-      this.completeAuth = function completeAuth () {
-        if (that.currentError && (!that.reply.raw.statusCode || that.reply.raw.statusCode < 400)) {
+      this.rejectAuth = function rejectAuth (err) {
+        if (!that.reply.raw.statusCode || that.reply.raw.statusCode < 400) {
           that.reply.code(401)
-        } else if (!that.currentError && that.reply.raw.statusCode && that.reply.raw.statusCode >= 400) {
+        }
+        that.done(err || new Error('sentinel'))
+        instance.release(that)
+      }
+
+      this.acceptAuth = function acceptAuth () {
+        if (that.reply.raw.statusCode && that.reply.raw.statusCode >= 400) {
           that.reply.code(200)
         }
-
-        that.done(that.currentError)
+        that.done()
         instance.release(that)
       }
     }
