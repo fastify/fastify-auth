@@ -2,25 +2,7 @@
   "name": "@fastify/auth",
   "version": "5.1.1",
   "description": "Run multiple auth functions in Fastify",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/fastify/fastify-auth.git"
-  },
-  "bugs": {
-    "url": "https://github.com/fastify/fastify-auth/issues"
-  },
-  "homepage": "https://github.com/fastify/fastify-auth#readme",
-  "funding": [
-    {
-      "type": "github",
-      "url": "https://github.com/sponsors/fastify"
-    },
-    {
-      "type": "opencollective",
-      "url": "https://opencollective.com/fastify"
-    }
-  ],
-  "main": "auth.js",
+  "main": "index.js",
   "type": "commonjs",
   "types": "types/index.d.ts",
   "scripts": {
@@ -30,6 +12,10 @@
     "test": "npm run test:unit && npm run test:typescript",
     "test:typescript": "tstyche",
     "test:unit": "c8 --100 node --test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fastify/fastify-auth.git"
   },
   "keywords": [
     "fastify",
@@ -57,6 +43,20 @@
     }
   ],
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fastify/fastify-auth/issues"
+  },
+  "homepage": "https://github.com/fastify/fastify-auth#readme",
+  "funding": [
+    {
+      "type": "github",
+      "url": "https://github.com/sponsors/fastify"
+    },
+    {
+      "type": "opencollective",
+      "url": "https://opencollective.com/fastify"
+    }
+  ],
   "devDependencies": {
     "@fastify/jwt": "^10.0.0",
     "@fastify/leveldb": "^6.0.0",
