@@ -2,7 +2,7 @@
 
 const { test } = require('node:test')
 const Fastify = require('fastify')
-const fastifyAuth = require('../auth')
+const fastifyAuth = require('..')
 
 test('registering plugin with invalid default relation', (t, done) => {
   t.plan(2)
