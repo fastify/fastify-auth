@@ -1,6 +1,6 @@
 {
   "name": "@fastify/auth",
-  "version": "5.1.1",
+  "version": "5.1.2",
   "description": "Run multiple auth functions in Fastify",
   "main": "index.js",
   "type": "commonjs",
