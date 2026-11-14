@@ -15,7 +15,27 @@ declare module 'fastify' {
       Request extends FastifyRequest = FastifyRequest,
       Reply extends FastifyReply = FastifyReply
     >(
-      functions: fastifyAuth.FastifyAuthFunction<Request, Reply>[] | (fastifyAuth.FastifyAuthFunction<Request, Reply> | fastifyAuth.FastifyAuthFunction<Request, Reply>[])[],
+      functions: (fastifyAuth.FastifyAuthCallbackFunction<Request, Reply> | fastifyAuth.FastifyAuthCallbackFunction<Request, Reply>[])[],
+      options?: {
+        relation?: fastifyAuth.FastifyAuthRelation;
+        run?: 'all';
+      }
+    ): preHandlerHookHandler<RawServer, RawRequest, RawReply, RouteGenericInterface, ContextConfigDefault, FastifySchema, TypeProvider, Logger>;
+    auth<
+      Request extends FastifyRequest = FastifyRequest,
+      Reply extends FastifyReply = FastifyReply
+    >(
+      functions: (fastifyAuth.FastifyAuthAsyncFunction<Request, Reply> | fastifyAuth.FastifyAuthAsyncFunction<Request, Reply>[])[],
+      options?: {
+        relation?: fastifyAuth.FastifyAuthRelation;
+        run?: 'all';
+      }
+    ): preHandlerHookHandler<RawServer, RawRequest, RawReply, RouteGenericInterface, ContextConfigDefault, FastifySchema, TypeProvider, Logger>;
+    auth<
+      Request extends FastifyRequest = FastifyRequest,
+      Reply extends FastifyReply = FastifyReply
+    >(
+      functions: (fastifyAuth.FastifyAuthFunction<Request, Reply> | fastifyAuth.FastifyAuthFunction<Request, Reply>[])[],
       options?: {
         relation?: fastifyAuth.FastifyAuthRelation;
         run?: 'all';
@@ -29,7 +49,7 @@ type FastifyAuth = FastifyPluginCallback<fastifyAuth.FastifyAuthPluginOptions>
 declare namespace fastifyAuth {
   export type FastifyAuthRelation = 'and' | 'or'
 
-  export type FastifyAuthFunction<
+  export type FastifyAuthCallbackFunction<
     Request extends FastifyRequest = FastifyRequest,
     Reply extends FastifyReply = FastifyReply
   > = (
@@ -38,6 +58,22 @@ declare namespace fastifyAuth {
     reply: Reply,
     done: (error?: Error) => void
   ) => void
+
+  export type FastifyAuthAsyncFunction<
+    Request extends FastifyRequest = FastifyRequest,
+    Reply extends FastifyReply = FastifyReply
+  > = (
+    this: FastifyInstance,
+    request: Request,
+    reply: Reply
+  ) => Promise<unknown>
+
+  export type FastifyAuthFunction<
+    Request extends FastifyRequest = FastifyRequest,
+    Reply extends FastifyReply = FastifyReply
+  > =
+    | FastifyAuthCallbackFunction<Request, Reply>
+    | FastifyAuthAsyncFunction<Request, Reply>
 
   /**
    * @link [`fastify-auth` options documentation](https://github.com/fastify/fastify-auth#options)
