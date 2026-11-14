@@ -35,6 +35,12 @@ app.register(fastifyAuth).after((_err) => {
       expect(this).type.toBe<FastifyInstance>()
     },
   ])
+  app.auth([
+    async (request, reply) => {
+      expect(request).type.toBe<FastifyRequest>()
+      expect(reply).type.toBe<FastifyReply>()
+    },
+  ])
   const auth = app.auth([() => {}])
   expect(auth).type.toBe<preHandlerHookHandler>()
   app.get('/secret', { preHandler: auth }, () => { })
